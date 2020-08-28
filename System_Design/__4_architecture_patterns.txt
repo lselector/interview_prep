@@ -120,7 +120,17 @@ Storage
      use consistent hashing, Cassandra
    CAP Theorem (Consistency, Availability, Partition Tolerance)
      Example with two writers and a wife
-
+     CA = you work on a document remotely with a partner
+          There is no partitioning between you.
+          You can answer to your wife's query - you have
+          consistency and availability
+     CP = Internet not working. So you and your partner are
+          partitioned from each other. To preserve consistency you stop
+          answering your wife's questions (no Availability).
+     AP = Internet still not working (P).
+          You decided to answer wife's questions (A).
+          But you lost Consistency with your partner.
+          
 Computation distributed - Map/Reduce
    word count
    map/reduce
@@ -151,7 +161,7 @@ Kafka'a topic is basically a pipe, a messaging bus
     Within each partition we can maintain order of messages, but we lose order globally
 
 New ideas:
-    add more calculatino ability inside Kafka.
+    add more calculation ability inside Kafka.
       For example, instead of moving data through Kafka to a database, 
          and then doing query calculations in this database,
       why can't we do these calculations in Kafka (or nearby microservices)

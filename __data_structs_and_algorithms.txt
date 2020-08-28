@@ -42,11 +42,14 @@ Books:
  - book: Designing Data-Intensive Applications - by Martin Kleppmann
 
 Training websites:
-  - leetcode
-  - hackerrank
+  - https://leetcode.com/
+  - https://www.hackerrank.com/
   - https://www.educative.io/
-  - Interview Cake
+  - https://www.interviewcake.com/
 Youtube - multiple channels, for example: Gaurav Sen
+  - https://www.youtube.com/watch?v=_5vrfuwhvlQ
+  - https://www.youtube.com/watch?v=zaRkONvyGr8
+  etc.
 # ---------------------------------------------------------
 
 =======================================

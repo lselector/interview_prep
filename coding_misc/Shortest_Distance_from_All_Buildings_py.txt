@@ -45,7 +45,7 @@
 #
 #    For each of Nb building we go over the whole area Nr*Nc,
 #       which takes O(Nb*Nr*Nc).
-#    The we go over the area one alst time to select the min(distSum)
+#    Then we go over the area one last time to select the min(distSum)
 #    So overall time complexity is O( Nblds * Nrows * Ncols )
 #    Space complexity - the sizes of hit[][]and distSum[][] and visited[][],
 #       i.e. O( 3 * Nrows * Ncols )
