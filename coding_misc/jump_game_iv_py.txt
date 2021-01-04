@@ -77,6 +77,20 @@ def minJumps(arr):
             nex_pos |= set([pos-1,pos+1] + mydict.pop(arr[pos], []))
         queue = nex_pos - visited  
 
+
+def minJumps2(arr):
+    """  https://leetcode.com/problems/jump-game-iv/discuss/503171/9-lines-Python-BFS """
+    import collections, itertools
+    indices = collections.defaultdict(list)
+    for i, a in enumerate(arr):
+        indices[a].append(i)
+    done, now = {-1}, {0}
+    for Nsteps in itertools.count():
+        done |= now
+        if len(arr) - 1 in done:
+            return Nsteps
+        now = {j for i in now for j in [i-1, i+1] + indices.pop(arr[i], [])} - done
+
 # --------------------------------------------------------------
 if __name__ == "__main__":
     test_cases = [
@@ -88,5 +102,5 @@ if __name__ == "__main__":
     ]
 
 for arr, nn in test_cases:
-    res = minJumps(arr)
+    res = minJumps2(arr)
     print(res,nn,arr)
