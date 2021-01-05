@@ -1,5 +1,5 @@
 
-Getting High-Paying Jobs.
+How to get High-Paying Jobs.
 
 I want to talk about getting high-paying jobs.
 I have helped many people over the years.
@@ -86,6 +86,55 @@ There are only two ways to break out of this catch-22 cycle:
       2. get some education - and convince that you are really excited and can do the job.
 
 In most cases I was using p.2
+
+========================================
+I had a friend who always felt that he needs to study more.
+To get more courses, more certifications.
+
+But if you don't go out and do the interviews, nothing happen.
+
+Suppose you have studied for 3 months and now you are 70% ready.
+If you study for another 3 months - you may be 75% ready.
+But if you instead spend this time on going on interviews,
+you would probably get a job by now.
+
+More studying will increase your chances by 5%.
+More interviewing will increase your chances by 100%.
+
+========================================
+I knew a guy who was absolutely useless at work,
+but he was complaining that he is not paid enough,
+so he was constantly going on interviews.
+Result - he was getting high-paying jobs.
+And adding them to his resume.
+So he was paid more than people around him.
+But - he was useless at work, not productive.
+
+Those who study - don't get jobs.
+
+Those who go on interviews - get jobs and more money.
+And once you get a job - you will learn new stuff
+on the job while getting paid.
+
+So, do not procrastinate - just get a job.
+
+========================================
+You need to accept that during the interview
+there will be questions which you can not answer.
+
+You never can prepare for everything.
+All companies are different.
+All systems and processes are different.
+
+Consider interviews as a learning experience.
+Ask questions, take notes, write down terms,
+then go home and google them, learn about them,
+maybe add to your resume.
+
+Going on interviews is like a free education.
+You meet with experienced high-paid professionals
+who talk and ask questions about your area of interest.
+This is a great opportunity to learn from them.
 
 ========================================
 Interview is the transfer of energy.
@@ -251,21 +300,48 @@ they will immediately search this person on Linkedin.
 Resume and Linkedin should correspond to each other.
 
 Both should contain a short summary at the top.
-Spend 90% of your effort on this top summary.
 
+Spend 90% of your effort on this top summary.
 Because nobody reads the whole resume or Linkedin profile.
+
 But people read the top (summary).
 So spend most of your attention on the title and summary.
 This is your positionning.
 
 ========================================
+Give yourself a title that corresponds to what you want to become.
+For example, if you are looking for a position of a Data Scientist,
+name yourself as a Data Scientist.
+
+Once you start talking about yourself as a Data Scientist,
+your outlook changes, your confidence increases, etc.
+
+What does it mean to be a Data Scientist ?
+It doesn't mean to go to college and get a degree.
+It simply means that you can do what average Data Scientists are doing.
+
+A minimalistic definition: 
+you need to know how to:
+  - get data - SQL or from CSV file
+  - explore data (Excel, Jupyter notebook, etc.)
+  - run some simple model (Linear Regression)
+  - evaluate model quality (accuracy, confusion matrix, precision, recall, ROC curve, etc.)
+  - make PowerPoint presentation
+
+There are multiple projects on Github, Medium, etc.
+Take one of them, reproduce step-by-step.
+Done.
+You are a minimalistic Data Scientist.
+
+========================================
 Get recommendations for your linkedin profile.
 At least 5-10, but 40-50 is better.
 People trust when they see positive reviews (recommendations).
+
 This is similar to a trust people experience when
 they see positive 5-star reviews on amazon.
 
-You need to present yourself as a 5-stars "product".
+So - present yourself as a 5-stars "product" using recommendations.
 
 ========================================
 
