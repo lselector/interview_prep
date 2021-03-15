@@ -8,21 +8,26 @@ And developed a certain methodology.
 Here are the main foundational ideas:
 ========================================
 There is no stability.
-Average job duration was less than 2years for a long time.
+Average job duration was less than 2 years for a long time.
 
 ========================================
 The technologies change fast.
 You need to learn new stuff to be marketable.
 You have to change, to adapt.
-To educate yourself into employment
+To educate yourself into employment.
+
 You need to be on the front of the wave to receive high rate/salary.
 
-Any skill becomes a "blue collar" job with average/low commodity pay.
+Any new job type becomes a "blue collar" job in just few years
+with average/low commodity pay.
+
 Most people don't educate themselves until they are forced to do so.
 So they are not increasing their salary.
-In fact, their effective compensation may go down, competition increase.
+In fact, their effective compensation may go down, and competition increase.
 
-Nowadays it is the competition against computers.
+Nowadays you have to compete also
+ - against remote outsorced people in other countries
+ - against computers (automation, cloud, AI)
 
 Many jobs are becoming extinct.
 For example, the number of human traders at financial companies
