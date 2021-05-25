@@ -8,8 +8,18 @@ with 3 methods:
 Requirement - all 3 methods should have time complexity O(1)
 
 Approach - use two data structures:
-  mylist - list of unique IP addresses
-  mydict - dictionary with elements (ip:idx), where idx is position of ip in the list
+
+mylist = [] # list of unique IP addresses
+mydict = {} # dictionary with elements (ip:idx), where idx is position of ip in the list
+myidx  = 0  # last position in the list
+
+# -------------------------------------
+def next_ip():
+    myidx += 1
+    idx_max = len(mylist)-1
+    if myidx > idx_max:
+        myidx = 0
+    return mylist[myidx]
 
 # -------------------------------------
 def add_ip(ip):
