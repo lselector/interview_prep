@@ -1,0 +1,160 @@
+# --------------------------------------------------------------
+# question 1
+# --------------------------------------------------------------
+
+This table has 1 row per unique call.
+(i.e. assume it only includes calls between 2 individuals)
+
+Table name: video_calls
++-----------------+---------------+---------------------------------------+
+|  column         |  data_type    |  description                          |
++-----------------+---------------+---------------------------------------+
+|  caller         |  BIGINT       |  FB ID of person who made the call    |
+|  recipient      |  BIGINT       |  FB ID of person who was called       |
+|  ds             |  STRING       |  date of the call                     |
+|  call_id        |  BIGINT       |  each call has a unique ID            |
+|  duration       |  DOUBLE       |  length of time of call, in seconds   |
++-----------------+---------------+---------------------------------------+
+
+SAMPLE ROWS
+caller   | recipient   | ds         | call_id | duration        
+123      | 456         | 2019-01-01 | 4325    |  864.4   
+032      | 789         | 2019-01-01 | 9395    |  263.7             
+456      | 032         | 2019-01-01 | 0879    |  22.0
+
+
+Identify the 10 users who initiated / started the most 
+video calls over the past 30 days
+
+My answer:
+
+select caller, count(1) as cnt
+from video_calls
+where int(now() - to_date(ds)) <= 30
+group by caller
+order by count(1) desc
+limit 10
+
+# --------------------------------------------------------------
+# question 2
+# --------------------------------------------------------------
+We add second table:
+
+Table name: dim_all_users
++------------------+---------------+---------------------------------------+
+|  column          |  data_type    |  description                          |
++------------------+---------------+---------------------------------------+
+|  user_id         |  BIGINT       |  user's FB ID                         |
+|  age_bucket      |  STRING       |  user's age category                  |
+|  country         |  STRING       |  country where the user is based      |
+|  primary_os      |  STRING       |  main device operating system         |
+|  dau_flag        |  TINYINT      |  1 for daily active users, else 0     |
+|  ds              |  STRING       |  date of the record                   |
++------------------+---------------+---------------------------------------+
+
+SAMPLE ROWS
+user_id  | age_bucket  | country       | primary_os   | dau_flag   | ds     
+123      | 25-34       | us            | android      |   1        | 2019-07-01
+456      | 65+         | gb            | ios          |   1        | 2019-07-01
+789      | 13-17       | fr            | ios          |   0        | 2019-07-01
+032      | 45-54       | eg            | android      |   1        | 2019-07-01
+
+
+Using both tables (video_calls & dim_all_users) calculate
+what % of daily active users from France were on a video call yesterday?
+
+step 1 - calculate number of daily active users from France for yesterday:
+
+select count(1) as cnt1
+from dim_all_users dim
+where dim.dau_flag = 1                 -- dau = daily active user
+  and to_date(dim.ds) = today() - 1   -- yesterday
+  and country = "fr"
+
+step 2 - calculate number of users
+        who had at least 1 call yesterday
+        from France (join)
+
+select count(1) as cnt2
+from (
+  select caller as user_id
+  from video_calls
+  where to_date(ds) = today() - 1
+  union
+  select recipient as user_id
+  from video_calls
+  where to_date(ds) = today() - 1
+) calls 
+join dim_all_users dim 
+   on cals.user_id = dim.user_id
+where dim.country = 'fr'
+  and dim.dau_flag = 1
+  and dim.ds = today() - 1
+
+step 3: 
+  calculate percentage as 100*cnt2/cnt1
+  note: special case when cnt1 is zero
+
+Steps 1,2 may be implemented as sub-queries
+
+# --------------------------------------------------------------
+# question 3
+# --------------------------------------------------------------
+FB feed has functionality called "re-sharing" of content 
+(content which is not original to the user).
+We need to make a decision whether it is a good feature or not.
+
+people A => B
+
+pros and cons
+
+pros - increase of engagement
+       increase of communication
+       helping to connect emotionally
+       (friends and family)
+
+cons - may cause spam
+       we need to monitor content (appropriate)
+       business to consumer may use it for advertising (free, not paying)
+=====
+How to measure if it is good or bad?
+
+Find a similar "role model" and see the metrics which are used there
+  what percentage re-shares consitute from all shares
+  what percentage are "massive" re-shares
+  do you receive any negative feedback from users (complaints) ?
+  do you see any "blocking/ unfriend" activity as a result of re-sharing ?
+
+Compose two groups which are as similar as possible,
+but one uses re-sharing, and other don't
+   A      B
+
+Look for difference in unfriend/block/complaint activity
+Also look in changes in metrics
+For example, 
+    if re-sharing increases feedback from friends - it is good
+but if re-sharing decreases communication - it is bad
+=================
+Suppose that analysis has shown that re-sharing is bad.
+What would be the recommendations?
+
+One possiblity - stop re-sharing completely.
+Others - selectively stop it only for groups where it causes problems.
+
+=================
+How do you test if removing re-sharing worked?
+
+Select two groups 
+   span countries, ages, ....
+stop resharing in one of them
+collect data for some time (30 days)
+calculate metrics
+compare (A/B) if it worked
+
+level of engagement (read, likes, respond, ...)
+level of communication
+time spend ...
+=================
+
+
+

@@ -1,0 +1,71 @@
+#! python3
+
+"""
+Algorithms: Solve 'Connected Cells' Using DFS
+from HackerRank's Cracking The Coding Interview Tutorial 
+with Gayle Laakmann McDowell
+ - https://www.youtube.com/watch?v=R4Nh-EgWjyQ
+We have a MxM matrix of zeros and ones, and we want 
+to find the largest rsize of a region of connected 1s.
+Example:
+         0 0 0 1 1 0 0
+         0 1 0 0 1 1 0
+         1 1 0 1 0 0 1
+         0 0 0 0 0 1 0
+         1 1 0 0 0 0 0
+         0 0 0 1 0 0 0
+
+Connection may be horizontal, vertical, or diagnoal.
+In the example above we have 4 groups, and the largest
+group on top-right has 7  1s.
+
+We can use Breadth First Search or Depth First Search.
+Here we will use DFS because it is a liitle easier to implement.
+
+Algorithm:
+  we do dual for-loop going through rows and columns
+  and for each cell we do the DFS and save its size.
+
+Note:
+  Once we started processing a cell with "1" we set it to "0"
+  to avoid duplicate efforts we "destroy" matrix as we go.
+  
+"""
+
+import os,sys
+
+matrix = [
+    [0, 0, 0, 1, 1, 0, 0],
+    [0, 1, 0, 0, 1, 1, 0],
+    [1, 1, 0, 1, 0, 0, 1],
+    [0, 0, 0, 0, 0, 1, 0],
+    [1, 1, 0, 0, 0, 0, 0],
+    [0, 0, 0, 1, 0, 0, 0]
+]
+
+Nrows = len(matrix)
+Ncols = len(matrix[0])
+
+# ----------------------------------------------------
+def get_region_size(matrix,row,col):
+    if row < 0 or col < 0 or row >= Nrows or col >= Ncols:
+        return 0
+    if matrix[row][col] == 0:
+        return 0
+    matrix[row][col] = 0 # we changing the matrix to avoid duplicate efforts
+    size = 1
+    for r in [row-1,row,row+1]:
+        for c in [col-1,col,col+1]:
+            if not (r==row and c==col):
+                size += get_region_size(matrix,r,c)
+    return size
+
+# ----------------------------------------------------
+max_size = 0
+for row in range(Nrows):
+    for col in range(Ncols):
+        if matrix[row][col] == 1:
+            size = get_region_size(matrix,row,col)
+            max_size = max(max_size,size)
+
+print(max_size)   # 7

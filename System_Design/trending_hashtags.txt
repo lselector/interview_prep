@@ -1,0 +1,123 @@
+How to design a trending algorithm for twitter
+
+http://blog.gainlo.co/index.php/2016/05/03/how-to-design-a-
+trending-algorithm-for-twitter/
+
+https://www.quora.com/How-does-the-Twitters-trending-measurement
+-algorithm-work
+
+Information needed
+The number of mentions of a subject (hashtags)
+Total time taken to generate that volume of tweets
+
+TweetSpout: Represents a component used for issuing the tweets
+in the topology
+
+TweetFilterBolt: Reads the tweets issued by the TweetSpout and
+executes the filtering. Only tweets that contain coded messages
+using the standard Unicode. also, violation and CC checks are
+made.
+ParseTweetBolt: Processes the filtered tweets issued as tuples
+by the component TweetFilterBolt. Taking into consideration that
+the tuple is filtered, at this level we have the guarantee that
+each tweet contains at least one hashtag
+
+CountHashtagBolt: Takes the tweets that are parsed through the
+component ParseTweetBolt and counts each hashtag. this is to get
+the hashtag and number of references to it
+
+TotalRankerBolt: Makes a total ranking of all the counted
+hashtags. converts count to ranks in one more pipeline.
+
+GeoLocationBolt: It takes the hashtag issued by the
+ParseTweetBolt, with the location of the tweet.
+
+CountLocationHashtagBolt: Presents a functionality similar to
+the component CountHashtagBolt uses one more dimension ie.
+Location
+
+RedisBolt: inserts in to redis
+
+Searching:
+
+Early Bird uses inverted full-text index. This means that it
+takes all the documents, splits them into words, and then builds
+an index for each word. Since the index is an exact string-
+match, unordered, it can be extremely fast. Hypothetically, an
+SQL unordered index on a varchar field could be just as fast,
+and in fact I think youll find the big databases can do a
+simple string-equality query very quickly in that case.
+
+Lucene does not have to optimize for transaction processing.
+When you add a document, it need not ensure that queries see it
+instantly. And it need not optimize for updates to existing
+documents.
+
+However, at the end of the day, if you really want to know, you
+need to read the source. Both things you reference are open
+source, after all.
+
+It has to scatter-gather across the datacenter. It queries every
+Early Bird shard and asks do you have content that matches this
+query? If you ask for New York Times all shards are queried,
+the results are returned, sorted, merged, and reranked. Rerank
+is by social proof, which means looking at the number of
+retweets, favorites, and replies.
+
+Databases:
+
+Gizzard is Twitters distributed data storage framework built on
+top of MySQL (InnoDB). InnoDB was chosen because it doesnt
+corrupt data. Gizzard us just a datastore. Data is fed in and
+you get it back out again. To get higher performance on
+individual nodes a lot of features like binary logs and
+replication are turned off. Gizzard handles sharding,
+replicating N copies of the data, and job scheduling.
+
+Cassandra is used for high velocity writes, and lower velocity
+reads. The advantage is Cassandra can run on cheaper hardware
+than MySQL, it can expand easier, and they like schemaless
+design.
+
+Hadoop is used to process unstructured and large datasets,
+hundreds of billions of rows.
+
+Vertica is being used for analytics and large aggregations and
+joins so they dont have to write MapReduce jobs.
+
+And I believe this article helps you to learn about how Twitter
+works, if not completely at least a bit.
+
+https://github.com/topics/trending-algorithm
+
+# -----------------------------------------------
+https://instagram-engineering.com/trending-on-instagram-
+b749450e6d93
+
+Popularity  the trend should be of interest to many people in
+our community.
+
+Novelty  the trend should be about something new. People were
+not posting about it before, or at least not with the same
+intensity.
+
+Timeliness  the trend should surface on Instagram while the
+real event is taking place.
+
+
+Given the historical counters of a hashtag (aka the time
+series), we can build a model that predicts the expected number
+of observations: C(h, t), and similarly, compute the expected
+probability P(h, t). Given these two values for each hashtag, a
+common measure for the difference between probabilities is the
+KL divergence, which in our case is computed as:
+     S(h, t) = P(h, t) * ln(P(h, t)/P(h, t))
+
+What this does is essentially consider both the currently
+observed popularity, which is captured by P(h, t), and the
+novelty, computed as the ratio between our current observations
+and the expected baseline, P(h, t)/P(h, t). The natural log
+(ln) function is used to smooth the strength of novelty and
+make it comparable to the popularity. The timeliness role is
+played by the t parameter, and by looking at the counters in the
+most recent time windows, trends will be picked up in real-time.

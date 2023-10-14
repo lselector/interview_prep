@@ -1,0 +1,97 @@
+﻿# given a string which composed from characters "(" and ")".
+# Find the lengthof the longest valid substring.
+# https://www.geeksforgeeks.org/length-of-the-longest-valid-substring/
+
+# ---------------------------------------------
+def max_valid_len_stack(ss):
+    """
+    # Using stack to store the index just before a "valid" substring
+    # and index of opening parentheses
+    # O(N) for time and O(N) for space
+    """
+    max_len = 0
+    stack = []                    # stack
+    stack += [-1]                 # idx "before"
+    for ii in range(len(ss)):
+        if ss[ii] == '(':
+            stack += [ii]         # growing stack
+        else:                     # ')'
+            if len(stack):
+                stack.pop()
+            if len(stack):
+                new_len = ii - stack[-1]
+                max_len = max(max_len, new_len)
+            else:
+                stack = [ii]     # idx "before"
+
+    return max_len
+
+
+# ---------------------------------------------
+def max_valid_len(ss):
+    """
+    # explicit counting of parentheses. No stack.
+    # O(N) for time and O(1) for space
+    """
+    left    = 0
+    right   = 0
+    max_len = 0
+    pre_len = 0
+    # -----
+    for ch in ss:
+        if ch == "(":
+            left += 1
+        elif ch == ")":
+            right += 1 
+            if right == left:
+                new_len = pre_len + right * 2
+                if  max_len < new_len:
+                    max_len = new_len
+                pre_len = new_len
+            elif right > left:
+                pre_len = 0
+            if right >= left:
+                right = 0
+                left  = 0
+    # -----
+    if (left > right) and (right*2 > max_len):
+        max_len = right*2
+
+
+    return max_len
+
+
+# ---------------------------------------------
+tests = [
+  ( '', 0),
+  ( '(', 0),
+  ( ')', 0),
+  ( '((', 0),
+  ( '))', 0),
+  ( '()', 2),
+  ( '()()', 4),
+  ('((()))', 6),
+  ( '()(((',   2),
+  ( '())))',   2),
+  ( ')))()',   2),
+  ( '(((()()', 4),
+  ( '))))(()()', 4),
+  ( '()(((((()', 2),
+  ( '())))))()', 2),
+  ( '(((()()()(((()()()()))))', 22),
+  ( '()()()((())))))))(()()()()(((()()()())()))', 24),
+  ( '(()()()()(((()()()())()))', 24),
+  ]
+
+
+# ---------------------------------------------
+myfunc = max_valid_len_stack
+# myfunc = max_valid_len
+print(myfunc.__name__)
+for tt in tests :
+    ss  = tt[0]
+    val = tt[1]
+    result = myfunc(ss)
+    ok = (result == val)
+    print(f"{val:3d}, {result:3d}, {ok}, \"{ss}\"")
+

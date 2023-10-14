@@ -1,0 +1,136 @@
+#! python3
+
+"""
+# LeetCode # 317. Shortest Distance from All Buildings
+#
+# You want to build a house on an empty land which 
+# reaches all buildings in the shortest amount of distance. 
+# You can only move up, down, left and right. 
+# You are given a 2D grid of values 0, 1 or 2, where:
+#   Each 0 marks an empty land which you can pass by freely.
+#   Each 1 marks a building which you cannot pass through.
+#   Each 2 marks an obstacle which you cannot pass through.
+#
+# Example: Input: [[1,0,2,0,1],[0,0,0,0,0],[0,0,1,0,0]]
+# 
+#        1 - 0 - 2 - 0 - 1
+#        |   |   |   |   |
+#        0 - 0 - 0 - 0 - 0
+#        |   |   |   |   |
+#        0 - 0 - 1 - 0 - 0
+#
+# Output: 7 
+# 
+# Explanation: Given three buildings at (0,0), (0,4), (2,2), 
+#   and an obstacle at (0,2),
+# the point (1,2) is an ideal empty land to build a house, 
+# as the total travel distance of 3+3+1=7 is minimal. 
+# So return 7.
+#
+# Note: There will be at least one building. 
+#   If it is not possible to build such house according 
+#   to the above rules, return -1.
+"""
+
+# ---------------------------------------------------------
+# Solution:
+#    Run a BFS (Breadth-First-Search) wave from each building
+#    over the whole land - and in each empty cell accumulate 2 numbers:
+#      hit[row][col] - hits from buildings (should max at N_buildings)
+#      distSum[row][col] - sum of distances from buildings
+#    Then from all empty cells select those where
+#       hit[row][col] == N_buildings
+#             (this means it has paths to all buildings)
+#    And from these select the one(s) with minimum value of distSum
+#
+#    For each of Nb building we go over the whole area Nr*Nc,
+#       which takes O(Nb*Nr*Nc).
+#    Then we go over the area one last time to select the min(distSum)
+#    So overall time complexity is O( Nblds * Nrows * Ncols )
+#    Space complexity - the sizes of hit[][]and distSum[][] and visited[][],
+#       i.e. O( 3 * Nrows * Ncols )
+#    Note: if we find an "unreacheable" building, 
+#          we return -1 immediately, which greatly improves
+#          overall speed on tests
+# ---------------------------------------------------------
+
+import collections
+
+# -------------------------------------------
+def BFS(r0, c0, grid, Nr, Nc, Nb, hit, distSum):
+    """
+    # we start at a building at a cell [r0][c0]
+    # and do BFS wave through the whole area
+    # keeping track of moves in three 2-dim arrays:
+    #    visited[r][c]  : visited or not
+    #    hit[r][c]      : number of times hit (by any path)
+    #    distSum[r][c]  : sum of distances (from all buildings)
+    # 
+    """
+    visited = [[False] * Nc for r in range(Nr)]
+    visited[r0][c0] = True
+    count1 = 1
+    queue = collections.deque([(r0, c0, 0)])
+    while queue:
+        r, c, dist = queue.popleft()
+        for i, j in ((r+1,c),(r-1,c),(r,c+1),(r,c-1)):
+            if (0<=i<Nr) and (0<=j<Nc) and (not visited[i][j]):
+                visited[i][j] = True
+                if not grid[i][j]:
+                    queue.append((i,j,dist+1))
+                    hit[i][j]     += 1
+                    distSum[i][j] += dist+1
+                elif grid[i][j] == 1:
+                    count1 += 1
+    return count1 == Nb
+
+# ---------------------------------------------------------
+def shortestDistance(grid):
+    if not grid or not grid[0]: 
+        return -1
+    Nr = len(grid)     # N rows
+    Nc = len(grid[0])  # N columns
+    Nb = 0             # N buildings
+    for row in grid:
+        for cell in row:
+            if cell == 1:
+                Nb += 1
+    # -------------------------------------------
+    hit     = [[0] * Nc for r in range(Nr)]
+    distSum = [[0] * Nc for r in range(Nr)]
+    # -------------------------------------------
+    # do are BFS wave from each building - populating
+    # counters in all empty cells.
+    # if there is a building from which it is not possible
+    # to reach one of other buildings - immediately exit with "-1"
+    for r in range(Nr):
+        for c in range(Nc):
+            if grid[r][c] == 1:  # building
+                reached_all = BFS(r, c, grid, Nr, Nc, Nb, hit, distSum)
+                if not reached_all: 
+                    return -1
+    # -------------------------------------------
+    # If we are here - this means that there are paths
+    # between buildings, we have two numbers for each
+    # empty cell:
+    #    hit[r][c] - was it hit while traveling from each building
+    #                if it was, it should be equal to number of buildings
+    #    distSum[r][c] - some of distances from all buildings
+    #                We need to select a cell with min value of that.
+    mymin = -1
+    for r in range(Nr):
+        for c in range(Nc):
+            if (not grid[r][c]) and (hit[r][c] == Nb):
+                if mymin < 0:
+                    mymin = distSum[r][c]
+                elif distSum[r][c] < mymin:
+                    mymin = distSum[r][c]
+    # -------------------------------------------
+    return mymin
+
+
+grid = [[1,0,2,0,1],[0,0,0,0,0],[0,0,1,0,0]]
+
+res = shortestDistance(grid)
+
+print(res)

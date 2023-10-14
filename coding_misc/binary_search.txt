@@ -1,0 +1,87 @@
+#! python3
+
+"""
+# binary search in sorted array
+# from https://realpython.com/binary-search-python/
+"""
+
+# -------------------------------------
+def find_index(arr, target):
+    left  = 0
+    right = len(arr) - 1
+
+    while left <= right:
+        middle = left + (right - left) // 2  #  a // 2  == int(a/2.0)
+
+        if arr[middle] == target:
+            return middle
+
+        if arr[middle] < target:
+            left = middle + 1
+        elif arr[middle] > target:
+            right = middle - 1
+
+    if left > 0:
+        return left - 1
+  
+    return left
+
+# -------------------------------------
+# searching by some property, not by value
+
+def find_index(arr, value, key):
+    left  = 0
+    right = len(arr) - 1
+
+    while left <= right:
+        middle = left + (right - left) // 2
+        middle_element = key(arr[middle])
+
+        if middle_element == value:
+            return middle
+
+        if middle_element < value:
+            left = middle + 1
+        elif middle_element > value:
+            right = middle - 1
+
+# Example:
+fruits = ['orange', 'plum', 'watermelon', 'apple']
+fruits.sort(key=len)
+print(fruits) # ['plum', 'apple', 'orange', 'watermelon']
+idx = find_index(fruits, key=len, value=10)
+print(idx) # 3
+print(fruits[idx]) # watermelon
+
+idx = find_index(fruits, key=len, value=3)v
+print(idx) # None
+
+# -------------------------------------
+# implementing "contains" function
+# accepts sorted array of values and a value
+# returns True of False depending on
+# whether the value is in the array
+
+def contains(arr, value):
+    left  = 0
+    right = len(arr) - 1
+
+    if left <= right:
+        middle = left + (right - left) // 2   
+
+        if arr[middle] == value:
+            return True
+
+        if arr[middle] < value:
+            return contains(arr[middle + 1:], value)
+        elif arr[middle] > value:
+            return contains(arr[:middle], value)
+
+    return False
+
+# -------------------------------------
+# checking recursion limit:
+import sys
+print(sys.getrecursionlimit()) # 3000
+# -------------------------------------
+# -------------------------------------

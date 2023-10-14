@@ -1,0 +1,240 @@
+Here are the interview questions 
+(Machine Learning, Data Science)
+
+======================================
+Problem 1
+
+Your medical plan allows you to put
+some money before taxes into HSA (Health Spending Account).
+You can spend this money on medical bills.
+If you spend less - the remainder disappears.
+If you spend more - then extra money you will pay
+out of your pocket "after taxes".
+
+Suppose that for your age and health the average
+annual spend is $1,000 +/- $100
+(approximately normal distribution with sigma=$100)
+
+Question - how much money you would put into this account?
+More than $1000, or less.
+
+======================================
+Problem 2
+
+You buy computers for data centers.
+From time to time you need to change them.
+How would you organize this?
+How to decide when to change?
+etc.
+You are given a table when computers were purchased,
+You see date, vendor, price, number pruchased,
+performance metrics, survival metrics
+
+======================================
+Problem 3
+
+Your company has contracts with multiple clients
+for IT support. These contracts have different
+SLAs for problems resolution.
+Some require 80% in a week, others - 90% in an hour.
+etc.
+
+If you don't have enough support people - the problems
+will start getting accumulated in a queue.
+
+You need to design a model to figure out
+an optimal number of technicians
+to have to handle service calls.
+
+Approach - Monte Carlo.
+Look for the trend in the length of the queue
+
+======================================
+Problem 4
+
+Two versions of the website
+Question - do people spend more time on the new version?
+Testers are required to accept terms (email).
+We send 1000 emails
+300 - accepted        15 min on average on the new site
+700 - not replied     13 min on average on the old site
+
+Can we accept/reject null hypothesis ?
+
+======================================
+Problem 5
+
+We collected statistics on failed flash drives.
+We found that 75% of failed drives have coffee stains on them.
+What is the conditional probability that drive fails given coffee stain.
+
+======================================
+Problem 6
+
+Multiple Linear regression with 10 predictors
+Which predictor is more important -
+  largest coefficient of smallest p-value
+
+Correlated predictors
+Scaling of predictors
+Biggest coefficient ?
+
+===============================
+Problem 7
+
+Stock price forecasting
+
+1. approach - just take today's value
+2. average of last 10 days
+
+When 1st approach is better than 2nd? Or vice versa?
+
+===============================
+Problem 8
+
+new product - shoe for a dog
+different sizes for diff dogs
+decide how many sizes you need - 3 sizes? more? 5 sizes?
+
+===============================
+Problem 9
+
+Similar to Buffon's needle problem
+x,y plane is divided into squares 1x1
+by vertical and horizontal lines for integer x and y.
+You are dropping a needle of length 1.
+What is the probability that it will cross (touch) some line?
+
+Write a program to estimate this probability.
+
+See also:
+ - http://jzimba.blogspot.com/2019/01/a-needle-in-square.html
+ -
+https://www.wolframcloud.com/objects/demonstrations/BuffonsNeedleExperimentForThreeTypesOfGrids-source.nb
+ - https://en.wikipedia.org/wiki/Buffon%27s_needle_problem
+
+import os, sys, math
+import numpy as np
+
+def does_intersect(x,y,alpha,L):
+    """
+    # x,y - coordinates of the center of the needle
+    # alpha - angle in [0, 2*pi)
+    """
+    if x==0 or y==0:
+        return 1
+    cx = 0.5*L*math.cos(alpha)
+    cy = 0.5*L*math.sin(alpha)
+    x1, x2, y1, y2 = x-cx, x+cx, y-cy, y+cy
+    for ii in [x1,x2,y1,y2]:
+        if math.floor(ii) != 0:
+            return 1
+    return 0
+
+L = 1
+N=10**6
+arr = np.zeros(N)
+for ii in range(N):
+    x = np.random.rand()
+    y = np.random.rand()
+    alpha = 2*math.pi*np.random.rand()
+    arr[ii] = does_intersect(x,y,alpha,L)
+
+# Calculate probabiltiy of intersecting
+print(1- arr.sum()/N)
+
+===============================
+Problem 10 - statistics medical test
+
+Testing for disease in two steps:
+1. cheap pre-test
+2. expensive more accurate test
+
+There are two labs for first test - they give just one number
+called "probability of the disease".
+Which Lab to select?
+
+Discussion - we need to stay on the side of caution.
+So better to choose the one which gives higher probability of the disease.
+
+We can take two group of people (with disease and healthy)
+and send their samples to both labs.
+Then we average the results within groups.
+
+From this we can estimate SE & SP (Sensitivity & Specificity).
+If both Labs testing shows reasonably good SP,
+then we select the one with the highest SE.
+
+===============================
+Problem 11 - statistics hacking
+
+Noisy adder - add Fibonacci numbers with noise
+Estimate mean and variance of the 10th noisy Fib number
+
+# --------------------
+def next_fib(x1,x2):
+    return (x1+x2)*(1+np.random.randn())
+
+# --------------------
+def calc_10th():
+    arr = [1,1]
+
+    for ii in range(arr,2,10):
+       arr.append(nex_fib(arr[-1],arr[-2])
+    return arr[9]
+
+# --------------------
+N = 10**4
+vals = []
+for ii in range(N)
+    vals.append(calc_10th())
+
+# --------------------
+# calc mean value
+
+Mean = np.mean(vals)
+
+# --------------------
+# calc    sum(x-x_mean)**2 / N
+
+Variance = np.var(vals)
+
+===============================
+Problem 12 - statistics A/B split test
+
+web site A/B split test:
+ A: 2570
+ B: 2430
+
+It is binomiual distribution (coin flip)
+ sigma = sqrt(Npq) = sqrt(N)/2 =~ 70/2 = 35
+ so we are at ~2*sigma, it is right at the border of 95% confidence interval
+
+===============================
+Problem 13 - statistics A/B split test #2
+
+Web site A/B split test - calculating number of clicks.
+Is the new site better?
+
+chi-square test of homogeneity
+
+E = N/2
+
+Chi_stat = (Oa-E)**2/E + (Ob-E)**2/E
+
+Then look p_val in the table for df=1
+===============================
+Problem 14 - recommending engine
+
+You need to make an algorithm to recommend
+restaurants for ordering online
+based on menus and on user order history.
+
+How would you do that?
+Feature engineering,
+  - combining/binning features
+  - feature importance
+  - ranking
+
+===============================
+

@@ -1,0 +1,171 @@
+
+# ---------------------------------------------------------
+Four Distributed Systems Architectural Patterns 
+  by Tim Berglund
+  - https://www.youtube.com/watch?v=BO761Fj6HH8
+
+Four architecture patterns:
+1. Modern  3-tier architecture
+   Old MVC Frameworks (Model, View, Controller):
+       Presentation      Process         Data
+       JSP               EJB/Servlet     Oracle
+       React.js          Node.js         Cassandra
+
+       Browsers <-> elastic <--> nginx/EJB <--> node.js <--> Cassandra
+       Browsers     load                        node.js </ >
+       Browsers     balancer                    node.js </ >
+
+Cassandra - all nodes same, each node has its own token
+  key      :value
+  hash(Tim):Americano
+    write to this node, and two more nodes going clockwise
+  how to preserve consistency?
+   - https://academy.datastax.com/ - good Cassandra tutorials
+
+Presentation (Front End) - many tools, javascript, lots of compute on client
+Data - infinitely scalable
+middle tier - also easy to scale
+
+Bad: need to write middle tier as stateless
+
+Overall Rating:
+   Scalability 4
+   Hipness     2
+   Difficulty  3
+   Flexibility 5
+Example Walmart.com
+# ---------------------------------------------------------
+2. Sharded Architecture  (Example slack)
+   client <--> /        \  <--> server <--> DB  <--> /           \
+   client <--> | Router |  <--> server <--> DB  <--> | Cassandra |
+   client <--> |        |  <--> server <--> DB  <--> |           |
+   client <--> \        /  <--> server <--> DB  <--> \           /
+
+Need to plan number of shardes
+zookeeper - helps to select the master, ...
+  if network problem (partition, GC pause, switch problem, ...)
+  the servers go to zookeeper to elect new master
+  then pervious re-appears
+
+Pros: client isolation is easy, known simple technologies
+Cons: complexity, no comprehensive view of data, need to ETL data for analysis
+      oversized shards (more than alocated computers),
+      complexity in the router
+Overall Rating:
+   Scalability 3
+   Hipness     1
+   Difficulty  4
+   Flexibility 3
+# ---------------------------------------------------------
+3. Lambda Architecture - events (unbounded, immutable data)
+   Streaming vs. Batch
+   Unbounded data (Stream) - succession of events
+   Bounded data (Batch) - database
+   Apache Beam with Frances Perry - great podcast
+
+          /-- long term bounded analysis, high latency  \
+         /     cassandra + spark                         \
+   kafka                                                  => cassandra
+         \                                               /
+          \-- temporary queue, unbounded, low latency   /
+               event Framework
+
+Kafka: 
+  producers, consumer, topics
+  producers put messages into topics
+  consumers take messages out of topics 
+  topics live on broker
+  if many topics and messages - broker needs to be partitioned (cluster).
+  Say, one topic is partitioned between 3 servers.
+  Then we lose ordering within topic, we only have ordering in each server.
+
+Pros of Lambda: optimize subsystems, good at unbounded data
+Cons of Lambda: you have to write code twice (slow and fasts)
+Overall Rating:
+   Scalability 5
+   Hipness     1
+   Difficulty  5
+   Flexibility 2
+# ---------------------------------------------------------
+4. Streaming Architecture  - all pieces exchange messages
+   There is no central database.
+   There is just message bus
+   There are just topics in central streaming.
+
+    - integration is a first-class concern
+    - life is dynamic, databases are static
+    - tables are streams and streams are tables
+    - keep your services close, your computations closer
+
+   Insert/update/delete into table are events.
+   Instead of a table we can store events in messages in topics
+
+   Streams API for Kafka - allows to do processing on streaming data
+   (aggregations, joins, ...)
+Overall Rating:
+   Scalability 5
+   Hipness     5
+   Difficulty  4
+   Flexibility 5
+# ---------------------------------------------------------
+# ---------------------------------------------------------
+Distributed Systems in One Lesson - by Tim Berglund
+
+Storage
+   from single-master to cluster
+     read replication
+     write replication
+     denormalize to remove joins and make reads fast
+     denormalize - remove indexes to make writes faster
+     use consistent hashing, Cassandra
+   CAP Theorem (Consistency, Availability, Partition Tolerance)
+     Example with two writers and a wife
+     CA = you work on a document remotely with a partner
+          There is no partitioning between you.
+          You can answer to your wife's query - you have
+          consistency and availability
+     CP = Internet not working. So you and your partner are
+          partitioned from each other. To preserve consistency you stop
+          answering your wife's questions (no Availability).
+     AP = Internet still not working (P).
+          You decided to answer wife's questions (A).
+          But you lost Consistency with your partner.
+          
+Computation distributed - Map/Reduce
+   word count
+   map/reduce
+   shuffle (similar words move closer to each other)
+   Hadoop
+   HDFS
+   Hive
+   Spark (RDDs, Data sets, over HDFS, Cassandra, S3, etc)
+   Kafka (messaging + computations)
+
+Messaging & Streaming
+   microservices, loosely-coupled systems
+   producers/subscribers
+   brokers - process messages (between producers and subscribers)
+   short-term persistence
+
+Kafka:
+  message - immutable array of bytes
+  topic - a feed of messages
+  producer - publishes messages to a topic
+  consumer (single-threaded subscriber)
+  broker - one of the servers that comprise Kafka cluster
+
+Kafka'a topic is basically a pipe, a messaging bus
+  When topic gets big - we replicate it into several partitions.
+    each partition topic has its own broker
+    messages distributed between partitions using consisten hashing
+    Within each partition we can maintain order of messages, but we lose order globally
+
+New ideas:
+    add more calculation ability inside Kafka.
+      For example, instead of moving data through Kafka to a database, 
+         and then doing query calculations in this database,
+      why can't we do these calculations in Kafka (or nearby microservices)
+         and get rid of the database ?
+    Lambda architecture:
+       database     - slow complete batch processing
+       events queue - fast summaries from streams

@@ -1,0 +1,239 @@
+1. Two Sum
+Easy
+
+Given an array of integers, return indices of the two numbers 
+such that they add up to a specific target.
+
+You may assume that each input would have exactly one solution, 
+and you may not use the same element twice.
+
+Example:
+Given nums = [2, 7, 11, 15], target = 9,
+Because nums[0] + nums[1] = 2 + 7 = 9,
+return [0, 1].
+
+class Solution(object):
+    def twoSum(self, nums, target):
+        """
+        :type nums: List[int]
+        :type target: int
+        :rtype: List[int]
+        """
+        seen = {}
+        for ii, vv in enumerate(nums):
+            rem = target - vv
+            if rem in seen:
+                return [seen[rem],ii]
+            seen[vv] = ii
+        return []
+
+# --------------------------------------------------------------
+2. Add Two Numbers
+Medium
+You are given two non-empty linked lists representing two 
+non-negative integers. The digits are stored in reverse order 
+and each of their nodes contain a single digit. 
+Add the two numbers and return it as a linked list.
+
+You may assume the two numbers do not contain any leading zero, 
+except the number 0 itself.
+
+Example:
+
+Input: (2 -> 4 -> 3) + (5 -> 6 -> 4)
+Output: 7 -> 0 -> 8
+Explanation: 342 + 465 = 807.
+
+# Definition for singly-linked list.
+# class ListNode:
+#     def __init__(self, x):
+#         self.val = x
+#         self.next = None
+
+class Solution:
+    def linkedListToNum(self, linked):
+        num_as_list = []
+        
+        while linked != None:
+            num_as_list.insert(0, linked.val)
+            linked = linked.next
+        
+        num = int("".join([str(digit) for digit in num_as_list]))
+
+        return num
+    
+    def numToLinkedList(self, num):
+        num_as_list = [int(digit) for digit in str(num)]
+        
+        head = ListNode(-1)
+        
+        for i in range(len(num_as_list)):
+            if i == 0:
+                head = ListNode(num_as_list[i])
+                continue
+            
+            linked = ListNode(num_as_list[i])
+            linked.next = head
+            head = linked
+        
+        return head
+    
+    def addTwoNumbers(self, l1: ListNode, l2: ListNode) -> ListNode:
+        a = self.linkedListToNum(l1)
+        b = self.linkedListToNum(l2)
+        
+        result = self.numToLinkedList(a+b)
+        
+        return result
+
+# --------------------------------------------------------------
+3. Longest Substring Without Repeating Characters
+Medium
+
+Given a string, find the length of the longest substring 
+without repeating characters.
+
+Example 1:
+  Input: "abcabcbb"
+  Output: 3 
+  Explanation: The answer is "abc", with the length of 3. 
+
+Example 2:
+  Input: "bbbbb"
+  Output: 1
+  Explanation: The answer is "b", with the length of 1.
+
+Example 3:
+  Input: "pwwkew"
+  Output: 3
+  Explanation: The answer is "wke", with the length of 3. 
+    Note that the answer must be a substring, 
+    "pwke" is a subsequence and not a substring.
+
+class Solution:
+    def lengthOfLongestSubstring(self, s: str) -> int:
+        mystr = ""
+        max_len = 0
+        for c in s:
+            if c not in mystr:
+                mystr += c
+            else:
+                max_len = len(mystr) if len(mystr) > max_len else max_len
+                mystr = mystr[mystr.index(c) + 1:] + c
+                
+        max_len = len(mystr) if len(mystr) > max_len else max_len
+        return max_len
+# --------------------------------------------------------------
+4. Median of Two Sorted Arrays
+Hard
+
+There are two sorted arrays nums1 and nums2 of size m and n respectively.
+Find the median of the two sorted arrays. 
+The overall run time complexity should be O(log (m+n)).
+You may assume nums1 and nums2 cannot be both empty.
+
+Example 1:
+  nums1 = [1, 3]
+  nums2 = [2]
+  The median is 2.0
+
+Example 2:
+  nums1 = [1, 2]
+  nums2 = [3, 4]
+  The median is (2 + 3)/2 = 2.5
+
+# -----------------------------------------------
+from collections import deque
+
+# -----------------------------------------------
+def merge_two_lists(l1,l2): 
+    ml=[]            # merged list
+    dq1=deque(l1)    # deque faster at ends than list
+    dq2=deque(l2)
+
+    while dq1 or dq2: 
+
+        if not dq1: 
+            for i in range(len(dq2)): 
+                ml.append(dq2[i])
+            return ml 
+
+        elif not dq2:  
+            for i in range(len(dq1)): 
+                ml.append(dq1[i])
+            return ml 
+
+        else:
+            a=dq1[0]
+            b=dq2[0]
+            if a>b: 
+                ml.append(dq2.popleft())
+            elif a<b: 
+                ml.append(dq1.popleft())
+
+            else: 
+                ml.append(dq1.popleft())
+                ml.append(dq2.popleft())
+
+    print(ml)
+    return ml 
+
+# -----------------------------------------------
+def find_median(ml): 
+    if len(ml)%2==0:
+        id1 = int(len(ml)/2)
+        id2 = int(len(ml)/2-1)
+        median=float(ml[id1]+ml[id2])/2
+    else: 
+        id1 = len(ml)//2
+        median=(ml[id1])
+    return median
+
+
+# -----------------------------------------------
+class Solution(object):
+    def findMedianSortedArrays(self, nums1, nums2):
+        ml = merge_two_lists(nums1,nums2) 
+        median = find_median(ml)
+        return median
+
+# --------------------------------------------------------------
+5. Longest Palindromic Substring
+Medium
+
+Given a string s, find the longest palindromic substring in s. 
+You may assume that the maximum length of s is 1000.
+
+Example 1:
+  Input: "babad"
+  Output: "bab"
+  Note: "aba" is also a valid answer.
+
+Example 2:
+  Input: "cbbd"
+  Output: "bb"
+
+class Solution:
+    def longestPalindrome(self, s: str) -> str:
+        if s == '':
+            return s
+        # create hash to count repeated chars
+        hh = {}
+        for c in s:
+            if c in hh:
+                hh[c] += 1
+            else:
+                hh[c] = 1
+        side = ""
+        center = ""
+        for c in hh:
+            n = c//2
+            side += "c"*n
+            if (len(center)==0) and (n % 2 == 1):
+                center = c
+
+        return side + center + side[::-1]
+
+# --------------------------------------------------------------
+# --------------------------------------------------------------
+

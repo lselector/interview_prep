@@ -1,0 +1,119 @@
+Substring-Search Algorithms:
+
+from Tushar Roy videos on youtube
+
+1) Brute Force Search O(m*n)
+2) KMP Substring Search algorithm (Knuth-Morris-Pratt) O(m+n)
+     in string: abcxabcdabxabcdabcdabcy
+     pattern:   abcdabcy
+   algorithm: 
+     1. we try to match.
+     2. if fail, we see if the end of the partial match can be 
+        a beginning of another match - and shift to that point.
+        (look for suffix that can be a prefix)
+   In actual implementation we first go through the pattern
+   and populate a temporary array of the same length 
+   showing where there are potential starting of match points.
+   For example, for "abcdabcy":
+                    "00001230"
+
+   https://www.youtube.com/watch?v=GTJr8OvyEVQ
+   https://github.com/mission-peace/interview/blob/master/src/com/interview/string/SubstringSearch.java
+
+3) Z algorithm O(m+n)
+   Z-array for a string is array of integers showing
+   the maximum length of a prefix starting at this position.
+   The first entry of Z array is meaningless because the 
+   complete string is always its own prefix.
+
+    Examples:
+        str: aabcaabxaaaz
+        Z  : x10031002210
+        
+        str: aaaaaa
+        Z  : x54321
+        
+        str: aabaacd
+        Z  : x102100
+        
+        str: abababab
+        Z  : x0604020
+
+   https://www.youtube.com/watch?v=CpZh4eF8QBw
+   https://github.com/mission-peace/interview/blob/master/src/com/interview/string/ZAlgorithm.java
+   http://www.geeksforgeeks.org/z-algorithm-linear-time-pattern-searching-algorithm/
+   http://www.utdallas.edu/~besp/demo/John2010/z-algorithm.htm
+ 
+ 
+4) Rabin Karp (compare rolling hash to pattern hash) O(m+n)..O(m*n)
+     Good use: detecting plagiarism. Given source material, 
+        the algorithm can rapidly search through a paper 
+        for instances of sentences from the source material.
+
+    The Rabin fingerprinting scheme is a method for implementing fingerprints using polynomials over a finite field. 
+
+
+5) Boyer-Moore (compare ends of strings) O(m+n) or better, 1977
+      This algorithm is used in GNU grep
+      It is also provided in C++ Boost, search.go, etc.
+      It is a standard modern benchmark
+      https://en.wikipedia.org/wiki/Boyer%E2%80%93Moore_string-search_algorithm
+
+    Construct "Bad Match Table" 
+    Compare pattern to the text starting from the rightmost character in pattern.
+    When the mismatch occurs - shift the pattern to the right
+    corresponding to the value in "Bad Match Table"
+
+    str: welcometoteammast    # string we searching in
+    pat: teammast             # pattern we searching for
+         01234567             # 8 - length of pattern
+    bad: teams*               # bad-match table
+         862318               # https://www.youtube.com/watch?v=G-h1Dph9IOE
+         (Length-Index-1, fille from left to right, overwriting duplicates)
+
+6) Aho-Corasick algorithm (1975) - dictionary-matching algorithm.
+   Was used in original unix fgrep.
+   Complexity O(TextLength + Words_Length + N_matches).
+   Algorithm constructs a finite-state machine that resembles 
+   a trie with additional links between the various internal nodes
+   (to jump fast between failed string matches).
+
+7) Finate state automation
+
+====================================================
+Finding the longest palindromic substring
+    https://en.wikipedia.org/wiki/Longest_palindromic_substring
+
+Manacher (1975) invented a linear time algorithm.
+
+Here is pseudocode with explanation
+    =====================================
+    given string S
+    generate S' by inserting a bogus character ('|') between each character in S (including outer boundaries)
+    Create array P to store the lengths of the palindrome for each center point in S (initially all 0s)
+        (S'.length = P.length = 2 × S.length + 1)
+    track the following pointers (referencing indices in P and S'):
+        R -> the next element to be examined (initially 0)
+        C -> the largest/left-most palindrome whose right boundary is R-1 (initially 0)
+        i -> the next palindrome to be calculated (initially 1)
+        L -> character candidate for comparing with R.  Computed implicitly as:
+            L = i  (R  i)
+        i' -> the palindrome mirroring i from C.  Computed implicitly as:
+            i' = C  (i  C)
+    
+    while R < P.length:
+        If i is within the palindrome at C (Cases 1 and 2):
+            Set P[i] = P[i'] (else P[i] is set to 0)
+    
+        Expand the palindrome at i (primarily Cases 2 and 3; can be skipped in Case 1, though we have already shown that S'[R]  S'[L] because otherwise the palindrome at i' would have extended at least to the left edge of the palindrome at C):
+            while S'[R] == S'[L]:
+                increment P[i]
+                increment R
+    
+        If the palindrome at i extends past the palindrome at C:
+            Update C = i
+    
+        increment i
+    
+    return max(P)
+    =====================================

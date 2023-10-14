@@ -1,0 +1,141 @@
+#! python3
+
+"""
+# Binary heap (max-heap or min-heap)
+#   data structure which looks like binary tree
+#   where each parent is >= (or <= for min-heap) than values of children
+# Binary heaps are a common way of implementing priority queues. 
+# Binary heap was introduced by J. W. J. Williams in 1964, as a data structure for heapsort.
+# --------------------------------------------------------------
+#   priority queue
+#     Suppose that we form a queue of tickets.
+#     Each ticket is described by a tuple with two numbers:
+#       (priority_num, ticket_num)
+#       priority_num : 1..10, where 1=highest, 10=lowest priority
+#       ticket_num   : sequentially growing number
+#     As tickets enter the queue, we sort the queue
+#       (by priority_num, ticket_num)
+#       so that tickets with higher priority (lower priority_num)
+#       will move forward. 
+#       And within same priority, "earlier" tickets (with lower ticket_num)
+#       will move forward.
+#     Usually the queue was sorted before adding a new element.
+#       So sorting simply means moving the element forward until if 
+#       finds its place.
+#     Usually priority queue is implemented using a min-heap structure
+#       (see later in this document)
+# --------------------------------------------------------------
+# Heap is usually stored in an array
+# If we have an array of numbers, then:
+# idx = 0 - root (top element)
+# idx - 1,2 - next layer
+# idx = 3,4,5,6 - text layer
+# etc.
+# last parent's idx = floor(N/2) - 1
+#
+# Given an array we can "heapify" it in place by swapping elements.
+#
+# Time complexity:
+#     building heap - O(N)
+#     push (add at bottom and adjust) - O(lg(N))
+#     pop (take from top and adjust)  - O(lg(N))
+#     heap sort - O(N*log(N))
+#
+# ----------------------------------------------------
+# import heapq 
+#    heapify(mylist) - convert mylist in place into min-heap
+#                        (max-heap - just invert all numbers)
+#    heappush(mylist, val) - adds element at the bottom and adjusts the heap
+#    val = heappop(mylist) - pops top element, and adjusts the heap
+# Example of usage:
+#   h = []
+#   heappush(h, (5, 'write code'))
+#   heappush(h, (7, 'release product'))
+#   heappush(h, (1, 'write spec'))
+#   heappush(h, (3, 'create tests'))
+#   heappop(h)  # (1, 'write spec')
+#   heappop(h)  # (3, 'create tests')
+#
+# ----------------------------------------------------
+# import queue
+# from queue import PriorityQueue
+#   q = PriorityQueue()
+#   q.put((5, 'write code'))
+#   q.put((7, 'release product'))
+#   q.put((1, 'write spec'))
+#   q.put((3, 'create tests'))
+#   while not q.empty():
+#       next_item = q.get()
+#       print(next_item)
+#
+# ----------------------------------------------------
+# Below is "from-scratch" implementation of a max-heap
+"""
+
+import os, sys
+
+# --------------------------------------------------------------
+def heapify(arr, n, i):
+    """
+    # heapify subtree from index "i" down (recursively)
+    # by swapping elements as needed
+    # arr - list to change in place
+    # n - length of this list
+    # i - index from which down we are "heapifying"
+    """
+    largest = i; # Initialize largest as root
+    idxl    = 2*i + 1;
+    idxr    = 2*i + 2;
+
+    # find if one of children is larger than root    
+    if (idxl < n) and (arr[idxl] > arr[largest]):
+        largest = idxl;
+    if (idxr < n) and (arr[idxr] > arr[largest]):
+        largest = idxr;
+
+    if largest != i:  # swap large child with root and fix subtree
+        arr[i], arr[largest] = arr[largest], arr[i]
+        heapify(arr, n, largest) # recursively fix affected sub-tree
+
+# --------------------------------------------------------------
+def build_max_heap(arr):
+    """ 
+    # build a Max-Heap from given list "arr" in-place 
+    """
+    n = len(arr)
+    if n <= 1:
+        return
+    start_idx = n // 2 - 1; # index of last non-leaf node
+    # heapify each "parent" node (from last to first)
+    for i in range(start_idx, -1, -1):
+        heapify(arr, n, i);
+
+# --------------------------------------------------------------
+if __name__ == '__main__':
+
+    # Binary Tree Representation
+    # of input array
+    #            1
+    #         /     \
+    #       3        5
+    #      / \      / \
+    #    4     6  13   10
+    #   / \   / \
+    #  9   8 15 17
+
+    arr = [ 1, 3, 5,  4,  6, 13,
+           10, 9, 8, 15, 17 ];
+
+    print(arr)
+    build_max_heap(arr);
+    print(arr)
+
+    # Final Heap:
+    #        17
+    #       /  \
+    #     15    13
+    #    / \    / \
+    #   9   6   5 10
+    #  / \ / \
+    # 4  8 3 1
+

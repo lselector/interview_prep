@@ -1,0 +1,128 @@
+﻿The game "Towers of Hanoi" uses three rods
+named S,T,A (Source, Target, Auxiliary)
+A number of disks is stacked in decreasing order 
+from the bottom to the top of one rod ("S), 
+i.e. the largest disk at the bottom and the smallest one 
+on top. The disks build a conical tower. 
+
+The aim of the game is to move the tower of disks 
+from one rod (S) to another rod (T). 
+
+The following rules have to be obeyed:
+1. Only one disk may be moved at a time.
+2. Only the most upper disk from one of the rods 
+can be moved in a move.
+3. It can be put on another rod, if 
+  - this rod is empty, 
+  - or if the top disk of this rod is larger than
+    the disk that is being moved.
+
+Recursive approach in 3 steps:
+  1. Move a tower of n - 1 discs Dn-1 ... D1 from S to A.
+     Disk Dn is left alone on peg S
+  2. Move disk Dn to T
+  3. Move the tower of n - 1 discs Dn-1 ... D1 on A to T, 
+     i.e. this tower will be put on top of Disk Dn
+
+
+# --------------------------------------------------------------
+# python solution
+# --------------------------------------------------------------
+def hanoi(n, source, helper, target):
+
+    if n > 0:
+
+        # move tower of size n - 1 from source to helper:
+        hanoi(n - 1, source, target, helper)
+
+        # move disk from source peg to target peg
+        if source:
+            target.append(source.pop())
+
+        # move tower of size n-1 from helper to target
+        hanoi(n - 1, helper, source, target)
+
+source = [4,3,2,1]
+target = []
+helper = []
+hanoi(len(source),source,helper,target)
+print source, helper, target
+
+
+// -------------------------------------------------------------
+// Golang solution
+// https://play.golang.org/p/T7K1VJEAFA
+// -------------------------------------------------------------
+package main
+
+
+import (
+    "fmt"
+    "time"
+//    "os"
+//    "os/exec" 
+)
+
+
+const Towers = 3
+const Disks = 5
+
+
+type Hanoi [Towers][]int
+
+
+func main() {
+    var state Hanoi
+    for ii := 0; ii<=Disks+2; ii++ {
+        fmt.Printf("\n")
+    }
+    state.init(Disks)
+    state.move(Disks, 0, 1, 2)
+}
+
+
+// ---------------------------------------------------
+func (h *Hanoi) init(n_disks int) {
+    h[0] = make([]int, n_disks)
+    for i := range h[0] {
+        h[0][i] = n_disks - i
+    }
+    h.print()
+}
+
+
+// ---------------------------------------------------
+func (h *Hanoi) move(n_disks, a, b, c int) {
+    if n_disks <= 0 {
+        return
+    }
+    h.move(n_disks-1, a, c, b)  // n-1 disks a->b via c
+    
+    disk := h[a][len(h[a])-1]   // take disk value from  a
+    h[a] = h[a][:len(h[a])-1]   // remove it from a
+    h[c] = append(h[c], disk)   // add it to c
+    h.print()
+    
+    h.move(n_disks-1, b, a, c)  // n-1 disks b->c via a
+}
+
+
+// ---------------------------------------------------
+func (h *Hanoi) print() {
+    // https://en.wikipedia.org/wiki/ANSI_escape_code
+    fmt.Printf("\033[%dA",Disks+2)
+    for i := Disks; i >= 0; i-- {
+        for j := 0; j < Towers; j++ {
+            if i == 0 {
+                fmt.Print("_/||\\_")
+            } else if len(h[j]) >= i {
+                fmt.Printf("  %02d  ", h[j][i-1])
+            } else {
+                fmt.Print("  ||  ")
+            }
+        }
+        fmt.Println()
+    }
+    fmt.Println()
+    time.Sleep(time.Second / 5)
+}

@@ -1,0 +1,54 @@
+#! python3
+
+"""
+# reverse linked list
+"""
+
+# ----------------------------------------------------
+# Definition for singly-linked list.
+class ListNode:
+    def __init__(self, x):
+        self.val = x
+        self.next = None
+
+# ----------------------------------------------------
+def reverseList(head: ListNode) -> ListNode:
+    """
+    # this function creates separate inverted list
+    # (it doesn't change the original list)
+    """
+    if (head == None) or (head.next == None):
+        return head
+    l1p = head
+    l2n = ListNode()
+    l2n.val = head.val 
+    
+    # l1p --> l1p.next
+    # l2n <-- l2p
+    
+    while l1p.next != None:
+
+        l2p = ListNode()
+        l2p.val  = l1p.next.val
+        l2p.next = l2n
+
+        l1p  = l1p.next 
+        l2n  = l2p
+
+    return l2p
+
+
+# ----------------------------------------------------
+def reverseList(self, head: ListNode) -> ListNode:
+    """
+    # this function reverses the list "in place"
+    """
+    prev = None
+
+    while head:
+        curr = head
+        head = head.next
+        curr.next = prev
+        prev = curr
+
+    return prev

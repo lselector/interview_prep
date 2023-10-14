@@ -1,0 +1,67 @@
+Prep for technical interview
+  - General advice 
+  - data structures
+  - algorithms
+  - train solving lots of problems 
+==========================================
+Very good course I bought for $99:
+  https://www.interviewcake.com/upgrade
+==========================================
+Two books worth buying:
+ - "Cracking the Coding Interview" 
+    https://www.amazon.com/Cracking-Coding-Interview-Programming-Questions/dp/0984782850/
+    also all youtube videos by Gayle L McDowell (there is a 35-videos playlist)
+
+ - "Elements of Programming Interviews"
+    https://www.amazon.com/Elements-Programming-Interviews-Python-Insiders/dp/1537713949/
+
+More books:
+ - "Introduction to Algorithms" - by Thomas H. Cormen, Charles E. Leiserson, Ronald L. Rivest, Clifford Stein
+ - "Programming Interviews Exposed: Secrets to Landing Your Next Job" - by John Mongan, Noah Kindler, Eric Giguère
+ - "Programming Pearls" - by Jon Bentley
+
+==========================================
+Youtube videos:
+    all videos by Gayle Laakmann McDowell
+      (search for : cracking coding interview gayle)
+    Two videos:
+        How to Prepare for a Google Interview (7min)
+         - https://www.youtube.com/watch?v=ko-KkSmp-Lk
+        Example Coding Interview (24 min)
+         - https://www.youtube.com/watch?v=XKu_SEDAykw
+==========================================
+Educative - https://www.educative.io/ - good courses
+==========================================
+webistes for sample problems:
+    Interview Cake - https://www.interviewcake.com/
+    Pramp.com      - https://www.pramp.com/#/
+    Topcoder       - https://www.topcoder.com/
+    LeetCode       - https://leetcode.com/
+    HackerRank     - https://www.hackerrank.com/dashboard
+                     https://github.com/tejasupmanyu/HackerRank-Practice/tree/master/Python
+    Hired In Tech  - https://www.hiredintech.com/
+    Project Euler - https://projecteuler.net/
+==========================================
+Specifically for Golang:
+    Several interviewcake solutions in "Golang":
+     - https://github.com/leighmcculloch/interviewcake
+    More solutions in Go: 
+     - https://github.com/MaximAbramchuck/awesome-interview-questions#golang
+
+==========================================
+Specific for Google Cloud:
+    App maintenance and troubleshooting: Google I/O 2011: Life in App Engine Production
+    - https://www.youtube.com/watch?v=rgQm1KEIIuc - 
+    Google Developers Codelabs - step-by-step building small applications:
+    - https://codelabs.developers.google.com/?cat=Cloud - 
+
+==========================================
+Google Cloud specific: docker, kubernetes, SSO = Single Sign-On, SAML, OAuth, 3-legged vs 2-legged OAuth
+ - https://www.docker.com
+ - https://kubernetes.io
+ - https://en.wikipedia.org/wiki/Single_sign-on
+ - https://en.wikipedia.org/wiki/Security_Assertion_Markup_Language
+ - https://oauth.net/2/
+ - https://stackoverflow.com/questions/13369516/why-is-there-3-legged-oauth2-when-2-legged-works-so-well
+
+==========================================

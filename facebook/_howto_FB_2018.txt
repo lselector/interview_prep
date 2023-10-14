@@ -1,0 +1,112 @@
+
+Before jumping into the material, I recommend checking 
+out this video around what to expect during the 
+recruiting process: 
+  https://www.facebook.com/video.php?v=10152735806862200
+
+The best way to prepare for the interview and increase 
+your odds is to practice. There is a lot of information 
+below but be sure to read everything because it should fully 
+prepare you for the initial interview. 
+
+What to expect on the day:
+
+    Your interview will take approx. 45mins. 
+    Expect to solve between 1-2 technical questions. 
+    Be prepared also for technical questions involving coding 
+    algorithms (search/sort questions) and data structures 
+    and design patterns and run time complexity.
+    It may also help to review core CS concepts as well 
+    as subjects pertaining to the scale of our environment. 
+    For coding questions, you will be asked to produce clean, 
+    compilable, efficient code in a reasonable amount of time. 
+
+A few helpful hints:
+
+    Think out loud if you are working through a solution you 
+    are presented with as the Engineer will want to know how 
+    you approach and troubleshoot problems. And also even 
+    before you begin coding your solution on the white board, 
+    give yourself a minute to think through what you will write. 
+    If the interviewer gives you hints to improve your code, 
+    take them and run with them. It is good to adjust and work 
+    through the problems with the interviewer to show your 
+    thought process and problem solving ability.
+    The Engineer will also want to ascertain your level of 
+    interest in the role. Have some questions prepared, for 
+    example, what is involved in the role, day to day tasks, 
+    what is the most exciting project they have worked on 
+    in Facebook etc.
+    Please research recent news online for talking points and 
+    more information about Facebook. 
+    Finally, be passionate! It can be a game-changer when 
+    interviewers notice how excited you are about learning 
+    new things or solving new problems.
+    Go to Program Creek 
+    https://www.programcreek.com/2012/11/top-10-algorithms-for-coding-interview/
+    and     review the Top 10 algorithms for a Coding Interview. 
+    Try to pick a few of the classic examples 
+    to solve by hand and from scratch on a blank sheet of paper. 
+    Time yourself so you are completing each question 
+    within 15-20 minutes. This exercise should best prepare 
+    you with what to expect during the interview. 
+
+A few coding samples:
+
+    Cracking the Coding Interview 4th edition, 310 pages:
+      - http://www.valleytalk.org/wp-content/uploads/2012/10/CrackCode.pdf
+    Career cup
+      - https://www.careercup.com/page
+    Code Chef
+      - https://www.codechef.com/
+    Project Euler
+      - https://projecteuler.net/index.php
+    Use Code Runner App, an editor to practice your algorithms
+      - https://coderunnerapp.com/
+    To study runtime complexity, use http://bigocheatsheet.com/
+
+In addition, below is a link to our Code Lab, where you can do 
+practice problems online. Questions range from <1 minute long 
+to ~1 hour, so if you are looking for tougher problems, 
+I recommend that you choose a longer time block when you go 
+to the “Create New Practice Session”.
+    Practice Coding Questions – FB Code Lab
+    - https://codelab.interviewbit.com/
+
+A few Facebook Links:
+
+    Get that job at Facebook
+    - https://www.facebook.com/notes/facebook-engineering/get-that-job-at-facebook/10150964382448920
+    - https://steve-yegge.blogspot.com/2008/03/get-that-job-at-google.html
+    Facebook Bootcamp
+    - ...
+    Engineering notes
+    - https://www.facebook.com/pg/Engineering/notes/
+    Facebook News Room
+    - https://newsroom.fb.com/
+
+Add'l Tips:
+
+    Don't worry about rote memorization such as runtimes or
+API/native calls. It's always good to know how to figure
+out approximate runtimes on the fly but the code you write
+is more important.
+    Generally avoid solutions that would have lots of edge
+cases or huge if/elseif/... blocks. Most coding interview
+questions at most places are designed with semi-elegant
+solutions so try to identify patterns. Deciding between
+iteration and recursion is always an important step.
+    You may be asked in the interview to explain a
+technically challenging problem you have worked on in the
+past. Think about and explain how the problem was
+technically challenging. 
+
+How to Crush Your Coding Interview 
+  - https://www.facebook.com/video.php?v=10152735777427200
+
+Feel free to reach out to me if you have any questions or requests- I know this is a lot of info at once!
+
+Best, 
+
+facebook.com/careers 
+

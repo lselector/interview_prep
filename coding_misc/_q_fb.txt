@@ -1,0 +1,410 @@
+﻿2018 facebook-interview-questions
+
+Practice Questions for the Facebook Interview
+
+Facebook's coding interviews are hard, but not impossible. 
+Like anything else, it just takes practice. 
+We'll walk you through it, step by step.
+
+# --------------------------------------------------------------
+43 of 46: Girl Scout Cookie Conspiracy
+merge two sorted arrays of integers
+into one sorted array. Think about edge cases!
+What happens when we've finished merging one...
+
+def merge_lists(my_list, alices_list):
+    merged list = []
+    // populate merged list
+    print(merged_list)
+my_list     = [3, 4, 6, 10, 11, 15]
+alices_list = [1, 5, 8, 12, 14, 19]
+print merge_lists(my_list, alices_list)
+# prints [1, 3, 4, 5, 6, 8, 10, 11, 12, 14, 15, 19]
+
+def merge_lists(list1, list2):
+    N = len(list1) + len(list2)
+    list3 = [None] * N
+    idx1 = idx2 = idx3 = 0
+    while idx3 < N:
+        end1 = idx1 >= len(list1)
+        end2 = idx2 >= len(list2)
+        if not end1 and (end2 or (list1[idx1] < list2[idx2])):
+            list3[idx3] = list1[idx1]
+            idx1 += 1
+        else:
+            list3[idx3] = list2[idx2]
+            idx2 += 1
+        idx3 += 1
+    return list3
+
+# --------------------------------------------------------------
+11 of 46: MillionGazillion : A New Search Engine
+A web crawler need to keep track of visited websites.
+Note - sites may have multiple subdomains.
+
+
+www.abc.com/...  is same as abc.com/...
+We can save space on only storing one of those links
+
+
+We can make a set "visited"
+We can separate shared prefixes recursively
+even by one character - we can use a Trie
+
+
+we would store 'google.com' as 
+visited['g']['o']['o']['g']['l']['e']['.']['c']['o']['m']['*'] = True.
+
+
+The '*' at the end means 'this is the end of an entry'. 
+
+
+class Trie(object):
+
+
+    def __init__(self):
+        self.root_node = {}
+
+
+    def add_word(self, word):
+        current_node = self.root_node
+        is_new_word = False
+
+
+        # Work downwards through the trie, adding nodes
+        # as needed, and keeping track of whether we add
+        # any nodes.
+        for char in word:
+            if char not in current_node:
+                is_new_word = True
+                current_node[char] = {}
+            current_node = current_node[char]
+
+
+        # Explicitly mark the end of a word.
+        # Otherwise, we might say a word is
+        # present if it is a prefix of a different,
+        # longer word that was added earlier.
+        if "End Of Word" not in current_node:
+            is_new_word = True
+            current_node["End Of Word"] = {}
+
+
+        return is_new_word
+
+
+Complexity is ~O(26^N)
+
+
+Other solutions:
+   ternary search tree
+   bloom filter 
+
+
+# --------------------------------------------------------------
+9 of 46: Binary Search Tree Checker
+Write a function to check that a binary tree is a valid binary
+search tree. Careful: checking a node against its parent isn't
+sufficient to prove...
+
+
+INT_MAX =  int(4e9)
+INT_MIN = -int(4e9)
+ 
+class Node:
+    def __init__(self, data):
+        self.data = data 
+        self.left = None
+        self.right = None
+
+
+def check_bst_valid(node, mini, maxi):
+    if node is None:  # empty is True
+        return True
+    if node.data < mini or node.data > maxi:
+        return False
+    return ( 
+        check_bst_valid(node.left, mini, node.data -1) 
+        and 
+        check_bst_valid(node.right, node.data+1, maxi) )
+
+
+root = Node(4)
+root.left = Node(2)
+root.right = Node(5)
+root.left.left = Node(1)
+root.left.right = Node(3)
+ 
+if (check_bst_valid(root, INT_MIN, INT_MAX)):
+    print("Is BST")
+else:
+    print("Not a BST")
+
+
+# --------------------------------------------------------------
+23 of 46: Does This Linked List Have A Cycle?
+Let's make two variables, slow_runner and fast_runner. 
+slow_runner advances one node, while fast_runner advance two nodes.
+Eventually fast runner will catch up with slow_runner - or hit the end of the list.
+
+
+# ---------------------------
+class Node:
+    def __init__(self, data, next):
+        self.data = data
+        self.next = next
+
+
+# ---------------------------
+class LinkedList:
+    def __init__(self):
+        self.head = Node(None, None) # this is the sentinel node!
+        self.head.next = self.head   # link it to itself
+
+
+    def add(self, data):
+        self.head.next = Node(data, self.head.next)
+
+
+# ---------------------------
+def check_cycle(head):
+    slowPointer = aa.head
+    fastPointer = aa.head.next
+    while fastPointer != None and fastPointer.next != None:
+        fastPointer = fastPointer.next.next
+        slowPointer = slowPointer.next
+        print(id(fastPointer),id(slowPointer))
+        if fastPointer == slowPointer:
+            return True
+    return False
+
+
+aa = LinkedList()
+for ii in range(10): aa.add(ii)
+bb = aa.head.next
+while bb.data: 
+    print(bb.data)
+    bb = bb.next
+
+
+check_cycle(aa.head)
+
+
+9
+8
+7
+6
+5
+4
+3
+2
+1
+4616640104 4616638816
+4616640328 4616640608
+4616639880 4616640104
+4616638592 4616639992
+4616638984 4616640328
+4616640608 4616640216
+4616639992 4616639880
+4616640216 4616639768
+4616639768 4616638592
+4616661368 4616661368
+Out[53]: True
+
+
+
+
+Complexity : O(n) time and O(1) space 
+
+
+# --------------------------------------------------------------
+15 of 46: The Nth Fibonacci Number    fib(n) = fib(n - 1) + fib(n - 2)
+
+
+def fib_recursive(n):
+    if n in [1, 0]:
+        return n
+    return fib_recursive(n - 1) + fib_recursive(n - 2)
+
+
+The calculation follows a binary tree of height "n", so 
+complexity is O(2**n)
+If we store already calculated numbers in an array - then 
+time complexity is O(n), and space complexity is also O(n)
+(or if we only keep last 2 numbers, then space complexity is 0)
+
+There is actually a direct formula to calculate Nth Fibonacci number:
+
+    aa = sqrt(5)
+    b1 = (1+aa)/2
+    b2 = (1-aa)/2
+    Fib(N) = (b1**N - b2**N)/aa
+
+# --------------------------------------------------------------
+13 of 46: Find The Rotation Point In An Array 
+Given rotated array of words, find rotation point 
+(in this case it is index of "aa"):
+
+ arr = [mm nn oo pp qq aa bb cc dd] 
+
+Solution - use binary search comparing with arr[0].
+Complexity - O(lg(n))
+
+
+  def find_rotation_point(words):
+    first_word = words[0]
+    floor_index = 0
+    ceiling_index = len(words) - 1
+
+
+    while floor_index < ceiling_index:
+        # Guess a point halfway between floor and ceiling
+        guess_index = floor_index + ((ceiling_index - floor_index) / 2)
+
+        # If guess comes after first word or is the first word
+        if words[guess_index] >= first_word:
+            # Go right
+            floor_index = guess_index
+        else:
+            # Go left
+            ceiling_index = guess_index
+
+        # If floor and ceiling have converged
+        if floor_index + 1 == ceiling_index:
+            # Between floor and ceiling is where we flipped to the beginning
+            # so ceiling is alphabetically first
+            return ceiling_index
+
+# --------------------------------------------------------------
+19 of 46: Implement a Queue With Two Stacks »
+This one's a classic toy problem that will really help you
+understand the importance of the different properties of queues
+and stacks. There's a naive solution, but then there's a much
+more efficient... 
+
+Solution:
+  Start putting stuff into stack1
+  As soon as we get first "dequeue" request - move all from stack1 to stack2
+  output from stack2
+  input into stack1
+  move from stack1 into stack2 only when stack2 is empty and dequeue request is received
+
+class QueueTwoStacks(object):
+
+    def __init__(self):
+        self.in_stack  = []
+        self.out_stack = []
+
+    def enqueue(self, item):
+        self.in_stack.append(item)
+
+    def dequeue(self):
+        if len(self.out_stack) == 0:
+
+            # Move items from in_stack to out_stack, reversing order
+            while len(self.in_stack) > 0:
+                newest_in_stack_item = self.in_stack.pop()
+                self.out_stack.append(newest_in_stack_item)
+
+            # If out_stack is still empty, raise an error
+            if len(self.out_stack) == 0:
+                raise IndexError("Can't dequeue from empty queue!")
+
+        return self.out_stack.pop()
+
+# --------------------------------------------------------------
+2 of 46: Product of Other Numbers »
+You have an array of integers, and for each index you want to
+find the product of every integer except the integer at that
+index. Write a function that takes an array... 
+For example, for array [1, 7, 3, 4]
+your function would return: [84, 12, 28, 21]
+by calculating: [7 * 3 * 4,  1 * 3 * 4,  1 * 7 * 4,  1 * 7 * 3]
+brute force (double-for-loop) -> O(n^2)
+
+Approach:
+  build two arrays (each is O(N)):
+     the product of all the integers before each index
+     the product of all the integers after each index
+  Use them to calculate the output array (O(N)
+  We can save on memory usage if we use the same array 
+  to go forward, and then to go back.
+  Edge cases - input contains zeros, input contains only one number
+
+
+def get_products_of_all_ints_except_at_index(int_list):
+    if len(int_list) < 2:
+        raise IndexError('list too short'_
+    arr = [None] * len(int_list)
+    tmp = 1
+    for i in xrange(len(int_list)):
+        arr[i] = tmp
+        tmp *= int_list[i]
+    tmp = 1
+    for i in xrange(len(int_list) - 1, -1, -1):
+        arr[i] *= tmp
+        tmp *= int_list[i]
+    return arr
+# --------------------------------------------------------------
+30 of 46: Permutation Palindrome
+Write an efficient function that checks whether any permutation
+of an input string is a palindrome (symmetric like ACDCA). 
+We can do this in O(n) time and...
+
+Solution - keep a set for characters which we saw odd number of times.
+If the length of the set >1 - return False.
+
+def has_palindrome_permutation(ss):
+    odd_set = set()
+    for ch in ss:
+        if ch in odd_set:
+            odd_set.remove(char)
+        else:
+            odd_set.add(char)
+    return len(odd_set) <= 1
+
+# --------------------------------------------------------------
+36 of 46: Single Riffle Shuffle 
+Write a function to tell us if a deck of cards is a single
+riffle of two other halves half1 and half2.
+
+def is_single_riffle(half1, half2, shuffled_deck):
+    half1_index = 0
+    half2_index = 0
+    half1_max_index = len(half1) - 1
+    half2_max_index = len(half2) - 1
+
+
+    for card in shuffled_deck:
+
+
+        # if we still have cards in half1
+        # and the "top" card in half1 is the same
+        # as the top card in shuffled_deck
+        if half1_index <= half1_max_index and \
+                card == half1[half1_index]:
+            half1_index += 1
+
+
+        # if we still have cards in half2
+        # and the "top" card in half2 is the same
+        # as the top card in shuffled_deck
+        elif half2_index <= half2_max_index and \
+                card == half2[half2_index]:
+            half2_index += 1
+
+
+        # if the top card in shuffled_deck doesn't match the top
+        # card in half1 or half2, this isn't a single riffle.
+        else:
+            return False
+
+
+    # all cards in shuffled_deck have been "accounted for"
+    # so this is a single riffle!
+    return True
+
+Complexity:
+   O(n) time and O(1) additional space.
+
+# --------------------------------------------------------------

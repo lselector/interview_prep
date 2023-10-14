@@ -1,0 +1,148 @@
+Hello!
+
+I am so excited to be working with you on your process with
+Facebook, and cannot wait to have you join our amazing family!
+As I spoke about below will be some prep material to help you on
+your journey with Facebook’s Technical Screen.
+
+This interview will be 45 minutes long and include 40 minutes of
+coding. The most successful individuals look to study by working
+with Leetcode, 
+
+   https://leetcode.com/problemset/algorithms/
+
+and looking to build up to 2 Medium to Hard Questions 
+in an Hour Period. This will help condition your brain
+to the fast pace of the interview. 
+
+Check out what Danil, our World.AI manager has to say about 
+his experience in our interview process, 
+World.AI Manager Interview Experience
+
+  https://www.linkedin.com/pulse/you-fail-codingdesign-interview-do-prepare-danil-kirsanov/
+  
+Also come in prepared with why you are interested with joining
+Facebook, this will be asked! Engineers and Managers like to see
+someone that knows why they would like to join and have done
+some research into our environment, projects, etc… 
+Your Excitement Can Go A Long Way!!!
+
+
+Coding Language
+
+We are tech agnostic! – Meaning you can answer the question in
+the language you prefer and are most comfortable with.
+
+What the interview will be assessing for;
+
+    Communication: Ask clarifying questions and talk out loud
+about your thought process/approach to the problem BEFORE
+jumping into the code. This will help the interviewer understand
+your problem solving skills and will also help you create a
+better solution.
+
+    Speed: Can the engineer we're assessing move fast? It is
+very important that you practice coding quickly. Time yourself
+when studying!
+
+    Quality: Is the code clean/bug free? If not, it’s okay to
+manually fix bugs and optimize the solution. P.S. Make sure you
+can go back and test your own code.
+
+Computer Science Fundamentals to Review
+
+Algorithms:
+
+    Merge Sort
+    Quick Sort
+    Breadth-first Search
+    Depth-first Search
+    Binary Search
+
+Data Structures:
+
+    Arrays/ArrayLists
+    Hash Tables
+    Trees
+    Graphs
+    Stacks/Queues
+    Heaps
+
+Concepts:
+
+    Big O
+    Recursion
+
+Tips
+
+    Most people study 1-2 weeks and practice on a whiteboard or
+coding competition websites beforehand.
+
+    Discuss initial ideas and solutions with your interviewer,
+which will help you to clarify any ambiguity.
+
+    Generally avoid solutions with lots of edge cases or huge
+if/else if/else blocks. Deciding between iteration and recursion
+is always an important step.
+
+    The test will test Data Structures and Algorithm Techniques,
+so prepare with the common ones above
+
+    Don’t worry about rote memorization such as runtimes or
+API/native calls. It's good to know how to figure out
+approximate runtimes on the fly but the code you write is more
+important.
+
+    You will be asked about O Memory Constraints on the
+complexity of the algorithm you are writing and its running time
+– O(N^2) to O(N), etc.
+
+Helpful Videos and Websites
+
+Leetcode Algorithim and Data Structure Problem Sets
+    https://leetcode.com/problemset/algorithms/
+    Password: FB_IPS
+
+Cracking the Facebook Coding Interview - The Approach 
+    https://www.youtube.com/watch?v=wCl9kvQGHPI
+    https://vimeo.com/157480836
+    Password: FB_IPS
+
+Cracking the Facebook Coding Interview - Problem Walkthrough (video)
+    https://www.youtube.com/watch?v=4UWDyJq8jZg
+    https://vimeo.com/158532188
+    Password: FB_IPS
+
+Cracking Coding Interview Handout:
+    email to: g@gayle.com, subject: fbprep
+
+================================================================
+More resources:
+  Grokking the System Design Interview
+    https://www.educative.io/courses/grokking-the-system-design-interview
+
+    https://www.youtube.com/watch?v=-W9F__D3oY4
+    
+    http://www.lecloud.net/post/7295452622/scalability-for-dummies-part-1-clones
+    
+    http://www.hiredintech.com/system-design
+    
+    https://www.quora.com/How-do-I-prepare-to-answer-design-questions-in-a-technical-interview
+    
+================================================================
+More from Gayle Laakmann McDowell:
+
+    Prep Handout: http://www.slideshare.net/gayle2/cracking-the-interview-skills-coding-soft-skills-product-management-handouts
+
+    Facebook Interview Prep Slides: http://bit.ly/fbprepslides
+
+    Cracking the Coding Interview, v6: for more problems, prep material, CS concept review, and a big section on big O. http://amzn.to/1lUVSRx
+
+    Cracking the Coding Interview Book Discussion Group: to discuss problems and other book and interview related https://www.facebook.com/groups/ctciofficial
+
+    Interview Videos (30% off coupon): What's a Facebook-style interview like? These "true to life" unscripted videos will show you (and what's going on in the interviewer's mind). Click here for 30% off. https://vimeo.com/r/1DGX/Q2dXTDdRQW
+================================================================
+================================================================
+================================================================
+================================================================
+================================================================

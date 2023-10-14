@@ -1,0 +1,83 @@
+﻿# python3
+
+
+# Morgan merges two "Input" stacks into one "Result" stack.
+# On each step he
+#   looks on top of stacks,
+#   selects the min value
+#   and moves it to the result stack.
+# Example:
+#
+#    Input1  Input2    Result
+#
+#    ACA     BCF
+#    CA      BCF       A
+#    CA      CF        AB
+#    A       CF        ABC
+#    A       CF        ABCA
+#             F        ABCAC
+#                      ABCACF
+
+
+import sys
+
+
+def morganAndString(a, b):
+    """ Function to merge two arrays """
+    c = ""
+    i,j=0,0
+
+
+    while i < len(a) and j < len(b):
+        if a[i] < b[j]:
+            c += a[i]
+            i = i + 1
+        elif a[i] > b[j]:
+            c += b[j]
+            j = j + 1
+        else:
+            # if chars are same, we need to go forward
+            # to select the lower next char (may need
+            # to go more than one step forward)
+            x,y = i,j
+            aprev = a[i]
+
+
+            while(x<len(a) and y<len(b)):
+                if a[x]!= b[y]:
+                    break
+                elif a[x] > aprev:
+                    c += a[i:x]
+                    c += b[j:y]
+                    i,j=x,y
+                    aprev = a[x]
+                x +=1
+                y +=1
+
+
+            if x == len(a):
+                c += b[j]
+                j += 1
+            elif y == len(b):
+                c += a[i]
+                i += 1
+            else:
+                if a[x] < b[y]:
+                    c += a[i]
+                    i += 1
+                else:
+                    c += b[j]
+                    j += 1
+    # just in case add the tails (if any)
+    c += a[i:]
+    c += b[j:]
+    return c
+
+
+if __name__ == "__main__":
+    t = int(input().strip())
+    for a0 in range(t):
+        a = input().strip()
+        b = input().strip()
+        result = morganAndString(a, b)
+        print(result)

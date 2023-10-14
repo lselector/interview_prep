@@ -1,0 +1,51 @@
+﻿// ---------------------------------------------------
+// read integer from stdin - and print its factorial
+// ---------------------------------------------------
+
+package main
+
+import (
+    "fmt"
+    "math/big"
+    "bufio"
+    "io"
+    "os"
+    "strings"
+    "strconv"
+)
+
+// ---------------------------------------------------
+func print_factorial(n int) {
+        res := big.NewInt(1)
+    for ii:=1;ii<=n;ii++ {
+        tmp := big.NewInt(int64(ii))
+        res = big.NewInt(0).Mul(res, tmp)
+    }
+    fmt.Println(res)
+}
+
+// ---------------------------------------------------
+func main() {
+    reader := bufio.NewReaderSize(os.Stdin, 1024 * 1024)
+    nTemp, err := strconv.ParseInt(readLine(reader), 10, 64)
+    checkError(err)
+    n := int(nTemp)
+    print_factorial(n)
+}
+
+// ---------------------------------------------------
+func readLine(reader *bufio.Reader) string {
+    str, _, err := reader.ReadLine()
+    if err == io.EOF {
+        return ""
+    }
+
+    return strings.TrimRight(string(str), "\r\n")
+}
+
+// ---------------------------------------------------
+func checkError(err error) {
+    if err != nil {
+        panic(err)
+    }
+}
