@@ -1,0 +1,1325 @@
+﻿
+Spring 2018
+46 questions with solutions
+
+# --------------------------------------------------------------
+1
+Apple Stocks 
+Figure out the optimal buy and sell time for a given stock,
+given its prices yesterday.
+
+
+ in q_google.txt
+
+
+# --------------------------------------------------------------
+2
+Product of All Other Numbers 
+For each number in an array, find the product of all the other
+numbers. You can do it faster than you'd think!
+
+
+Solution
+first go forward and get the products of all the integers before each index, 
+then we go backwards to get the products of all the integers after each index,
+at which point we multiply before and after.
+
+
+  def get_products_of_all_ints_except_at_index(int_list):
+    if len(int_list) < 2:
+        raise IndexError('Getting the product of numbers at other '
+                         'indices requires at least 2 numbers')
+
+
+    # We make a list with the length of the input list to
+    # hold our products
+    products_of_all_ints_except_at_index = [None] * len(int_list)
+
+
+    # For each integer, we find the product of all the integers
+    # before it, storing the total product so far each time
+    product_so_far = 1
+    for i in xrange(len(int_list)):
+        products_of_all_ints_except_at_index[i] = product_so_far
+        product_so_far *= int_list[i]
+
+
+    # For each integer, we find the product of all the integers
+    # after it. since each index in products already has the
+    # product of all the integers before it, now we're storing
+    # the total product of all other integers
+    product_so_far = 1
+    for i in xrange(len(int_list) - 1, -1, -1):
+        products_of_all_ints_except_at_index[i] *= product_so_far
+        product_so_far *= int_list[i]
+
+
+    return products_of_all_ints_except_at_index
+
+
+Complexity O(n) time, O(n) space
+
+
+# --------------------------------------------------------------
+3
+Highest Product of 3 
+Find the highest possible product that you can get by
+multiplying any 3 numbers from an input array.
+
+
+We use a greedy ↴ approach to solve the problem in one pass. 
+At each iteration we keep track of:
+
+
+highest_product_of_3
+highest_product_of_2
+highest
+lowest_product_of_2
+lowest
+When we reach the end, the highest_product_of_3 is our answer. 
+We maintain the others because they're necessary for keeping 
+the highest_product_of_3 up to date as we walk through the list. 
+At each iteration, the highest_product_of_3 is the highest of:
+
+
+the current highest_product_of_3
+current * highest_product_of_2
+current * lowest_product_of_2 
+  (if current and lowest_product_of_2 are both low negative 
+   numbers, this product is a high positive number).
+
+
+  def highest_product_of_3(list_of_ints):
+    if len(list_of_ints) < 3:
+        raise ValueError('Less than 3 items!')
+
+
+    # We're going to start at the 3rd item (at index 2)
+    # so pre-populate highests and lowests based on the first 2 items.
+    # We could also start these as None and check below if they're set
+    # but this is arguably cleaner
+    highest = max(list_of_ints[0], list_of_ints[1])
+    lowest  = min(list_of_ints[0], list_of_ints[1])
+    highest_product_of_2 = list_of_ints[0] * list_of_ints[1]
+    lowest_product_of_2  = list_of_ints[0] * list_of_ints[1]
+
+
+    # Except this one--we pre-populate it for the first *3* items.
+    # This means in our first pass it'll check against itself, which is fine.
+    highest_product_of_3 = list_of_ints[0] * list_of_ints[1] * list_of_ints[2]
+
+
+    # Walk through items, starting at index 2
+    for i in xrange(2, len(list_of_ints)):
+        current = list_of_ints[i]
+
+
+        # Do we have a new highest product of 3?
+        # It's either the current highest,
+        # or the current times the highest product of two
+        # or the current times the lowest product of two
+        highest_product_of_3 = max(highest_product_of_3,
+                                   current * highest_product_of_2,
+                                   current * lowest_product_of_2)
+
+
+        # Do we have a new highest product of two?
+        highest_product_of_2 = max(highest_product_of_2,
+                                   current * highest,
+                                   current * lowest)
+
+
+        # Do we have a new lowest product of two?
+        lowest_product_of_2 = min(lowest_product_of_2,
+                                  current * highest,
+                                  current * lowest)
+
+
+        # Do we have a new highest?
+        highest = max(highest, current)
+
+
+        # Do we have a new lowest?
+        lowest = min(lowest, current)
+
+
+    return highest_product_of_3
+
+
+Complexity O(n) time and O(1) space
+
+
+# --------------------------------------------------------------
+4
+Merging Meeting Times 
+Write a function for merging meeting times given everyone's
+schedules. It's an enterprise end-to-end scheduling solution,
+dog.
+
+
+Solution
+First, we sort our input list of meetings by start time so any 
+meetings that might need to be merged are now next to each other.
+
+
+Then we walk through our sorted meetings from left to right. 
+At each step, either:
+
+
+We can merge the current meeting with the previous one, so we do.
+We can't merge the current meeting with the previous one, 
+so we know the previous meeting can't be merged with any future 
+meetings and we throw the current meeting into merged_meetings.
+
+
+  def merge_ranges(meetings):
+    # Sort by start time
+    sorted_meetings = sorted(meetings)
+
+
+    # Initialize merged_meetings with the earliest meeting
+    merged_meetings = [sorted_meetings[0]]
+
+
+    for current_meeting_start, current_meeting_end in sorted_meetings[1:]:
+        last_merged_meeting_start, last_merged_meeting_end = merged_meetings[-1]
+
+
+        # If the current meeting overlaps with the last merged meeting, use the
+        # later end time of the two
+        if (current_meeting_start <= last_merged_meeting_end):
+            merged_meetings[-1] = (last_merged_meeting_start,
+                                   max(last_merged_meeting_end,
+                                       current_meeting_end))
+        else:
+            # Add the current meeting since it doesn't overlap
+            merged_meetings.append((current_meeting_start, current_meeting_end))
+
+
+    return merged_meetings
+
+
+Complexity O(n lg n) time and O(n) space.
+
+
+# --------------------------------------------------------------
+5
+Making Change 
+Write a function that, given:
+   an amount of money
+   a list of coin denominations
+computes the number of ways to make the amount of money 
+with coins of the available denominations.
+
+
+Solution
+We use a bottom-up algorithm to populate a list
+    ways_of_doing_n_cents 
+such that ways_of_doing_n_cents[k] is how many ways 
+we can get to k cents using our denominations.
+
+
+We start with the base case that there's one way 
+to create the amount zero, and progressively 
+add each of our denominations.
+
+
+The number of new ways we can make a higher_amount 
+when we account for a new coin is simply 
+ways_of_doing_n_cents[higher_amount - coin], 
+where we know that value already includes combinations 
+involving coin (because we went bottom-up, we know that
+smaller values have already been calculated).
+
+
+  def change_possibilities_bottom_up(amount, denominations):
+    ways_of_doing_n_cents = [0] * (amount + 1)
+    ways_of_doing_n_cents[0] = 1
+
+
+    for coin in denominations:
+
+
+        for higher_amount in xrange(coin, amount + 1):
+            higher_amount_remainder = higher_amount - coin
+            ways_of_doing_n_cents[higher_amount] += (
+                ways_of_doing_n_cents[higher_amount_remainder]
+            )
+
+
+    return ways_of_doing_n_cents[amount]
+
+
+
+
+Complexity O(n*m) time and O(n) additional space, where 
+  n is the amount of money and 
+  m is the number of potential denominations.
+
+
+# --------------------------------------------------------------
+6
+Rectangular Love 
+Write a function to find the rectangular intersection of 
+two given love rectangles.
+Rectangles are always "straight" and never "diagonal." 
+They are defined as dictionaries like this:
+  my_rectangle = {
+    'left_x'   : 1,
+    'bottom_y' : 1,
+    'width'    : 6,
+    'height'   : 3,
+  }
+
+
+Your output rectangle should use this format as well.
+
+
+Solution
+We divide the problem into two halves:
+  The intersection along the x-axis
+  The intersection along the y-axis
+Both problems are basically the same as finding the 
+intersection of two "ranges" on a 1-dimensional number line.
+
+
+So we write a helper function find_range_overlap() that 
+can be used to find both the x overlap and the y overlap, 
+and we use it to build the rectangular overlap:
+
+
+    # ---------------------------
+    def find_range_overlap(point1, length1, point2, length2):
+        # Find the highest start point and lowest end point.
+        # The highest ("rightmost" or "upmost") start point is
+        # the start point of the overlap.
+        # The lowest end point is the end point of the overlap.
+        highest_start_point = max(point1, point2)
+        lowest_end_point = min(point1 + length1, point2 + length2)
+    
+        # Return null overlap if there is no overlap
+        if highest_start_point >= lowest_end_point:
+            return (None, None)
+    
+        # Compute the overlap length
+        overlap_length = lowest_end_point - highest_start_point
+    
+        return (highest_start_point, overlap_length)
+    
+    
+    # ---------------------------
+    def find_rectangular_overlap(rect1, rect2):
+        # Get the x and y overlap points and lengths
+        x_overlap_point, overlap_width  = find_range_overlap(rect1['left_x'],
+                                                             rect1['width'],
+                                                             rect2['left_x'],
+                                                             rect2['width'])
+        y_overlap_point, overlap_height = find_range_overlap(rect1['bottom_y'],
+                                                             rect1['height'],
+                                                             rect2['bottom_y'],
+                                                             rect2['height'])
+    
+        # Return null rectangle if there is no overlap
+        if not overlap_width or not overlap_height:
+            return {
+                'left_x'   : None,
+                'bottom_y' : None,
+                'width'    : None,
+                'height'   : None,
+            }
+    
+        return {
+            'left_x'   : x_overlap_point,
+            'bottom_y' : y_overlap_point,
+            'width'    : overlap_width,
+            'height'   : overlap_height,
+        }
+
+
+Complexity O(1) time and O(1) space
+
+
+# --------------------------------------------------------------
+7
+Temperature Tracker 
+Write code to continually track the max, min, mean, and mode 
+as new numbers are inserted into a tracker class.
+  class TempTracker with these methods:
+    insert()   - records a new temperature (int, 0...110)
+    get_max()  - returns the highest temp we've seen so far (int)
+    get_min()  - returns the lowest temp we've seen so far (int)
+    get_mean() - returns the mean of all temps we've seen so far (float)
+    get_mode() - returns the temperature which we encounted the most (int)
+Optimize getters.
+
+
+Solution:
+    def __init__(self):
+        # For mode --------------------
+        self.occurrences = [0] * 111  # List of 0s at indices 0..110
+        self.max_occurrences = 0
+        self.mode = None
+        # For mean --------------------
+        self.number_of_readings = 0
+        self.total_sum = 0.0  # Mean should be float
+        self.mean = None
+        # For min and max -------------
+        self.min_temp = float('inf')
+        self.max_temp = float('-inf')
+
+
+    def insert(self, temperature):
+        # For mode --------------------
+        self.occurrences[temperature] += 1
+        if self.occurrences[temperature] > self.max_occurrences:
+            self.mode = temperature
+            self.max_occurrences = self.occurrences[temperature]
+        # For mean --------------------
+        self.number_of_readings += 1
+        self.total_sum += temperature
+        self.mean = self.total_sum / self.number_of_readings
+        # For min and max -------------
+        if temperature > self.max_temp:
+            self.max_temp = temperature
+        if temperature < self.min_temp:
+            self.min_temp = temperature
+    def get_max(self):
+        return self.max_temp
+    def get_min(self):
+        return self.min_temp
+    def get_mean(self):
+        return self.mean
+    def get_mode(self):
+        return self.mode
+
+
+Complexity O(1) for time for each method, and O(1) for space
+  (we only use list of 110 temperatures)
+
+
+# --------------------------------------------------------------
+8
+Balanced Binary Tree 
+Write a function to see if a binary tree is 'superbalanced' - a
+new tree property we just made up. A tree is "superbalanced" if 
+the difference between the depths of any two leaf nodes is <= 1.
+
+
+We will use depth-first search to reach leaves faster
+(hit False faster).
+We will use iterative approach instead of recursive.
+
+
+    class BinaryTreeNode(object):
+    
+        def __init__(self, value):
+            self.value = value
+            self.left  = None
+            self.right = None
+    
+        def insert_left(self, value):
+            self.left = BinaryTreeNode(value)
+            return self.left
+    
+        def insert_right(self, value):
+            self.right = BinaryTreeNode(value)
+            return self.right
+
+
+    def is_balanced(tree_root):
+        # A tree with no nodes is superbalanced, 
+        # since there are no leaves!
+        if tree_root is None:
+            return True
+    
+        # We keep list of depths - and short-circuit 
+        # as soon as we find more than 2 depths
+        depths = []
+
+
+        # We'll maintain a list "nodes" of (node, depth) tuples
+        # and treat it as a stack
+        nodes = []
+        nodes.append((tree_root, 0))
+    
+        while len(nodes):
+            # Pop a node and its depth from the top of our stack
+            node, depth = nodes.pop()
+    
+            # Case: we found a leaf
+            if (not node.left) and (not node.right):
+                # We only care if it's a new depth
+                if depth not in depths:
+                    depths.append(depth)
+    
+                    # unbalanced tree:
+                    #   more than 2 different leaf depths
+                    #   or 2 leaf depths that are more than 1 apart
+                    if ((len(depths) > 2) or
+                            (len(depths) == 2 and abs(depths[0] - depths[1] > 1))):
+                        return False
+            else:
+                # Case: this isn't a leaf - keep stepping down
+                if node.left:
+                    nodes.append((node.left, depth + 1))
+                if node.right:
+                    nodes.append((node.right, depth + 1))
+    
+        return True
+
+
+# --------------------------------------------------------------
+9
+Binary Search Tree Checker 
+Write a function to check that a binary tree is a valid binary
+search tree.
+
+
+ in q_fb.txt
+
+
+# --------------------------------------------------------------
+10
+2nd Largest Item in a Binary Search Tree 
+Find the second largest element in a binary search tree. keep
+reading 
+
+
+ in q_google.txt
+
+
+# --------------------------------------------------------------
+11
+MillionGazillion 
+I'm making a new search engine called MillionGazillion(tm), and
+I need help figuring out what data structures to use. keep
+reading 
+
+
+ in q_fb.txt
+
+
+# --------------------------------------------------------------
+12
+Find in Ordered Set 
+Given an array of numbers in sorted order, how quickly could we
+check if a given number is present in the array?
+
+
+Solution
+Because the list is sorted, we can use binary search 
+Complexity: O(lg N) time and O(1) space
+
+
+# --------------------------------------------------------------
+13
+Find Rotation Point 
+I wanted to learn some big words to make people think I'm smart,
+but I messed up. Write a function to help untangle the mess I
+made.
+
+
+ in q_fb.txt
+
+
+# --------------------------------------------------------------
+14
+Inflight Entertainment 
+Writing a simple recommendation algorithm that helps people
+choose which movies to watch during flights.
+Write a function which returns True if there are two movies
+whose total runtime equals to flight length.
+Don't make your users watch the same movie twice.
+Optimize for runtime over memory.
+
+
+    def can_two_movies_fill_flight(arr_movie_lengths, flight_length):
+        # Movie lengths we've seen so far
+        movie_lengths_seen = set()
+    
+        for first_movie_length in arr_movie_lengths:
+            matching_second_movie_length = flight_length - first_movie_length
+            if matching_second_movie_length in movie_lengths_seen:
+                return True
+            movie_lengths_seen.add(first_movie_length)
+    
+        # We never found a match, so return False
+        return False
+
+
+Complexity O(N) for time and space
+# --------------------------------------------------------------
+15
+Compute nth Fibonacci Number 
+Computer the nth Fibonacci number. Careful--the recursion can
+quickly spin out of control!
+
+
+def fib(n):
+    # Edge cases:
+    if n < 0:
+        raise ValueError('Index was negative. No such thing as a '
+                         'negative index in a series.')
+    elif n in [0, 1]:
+        return n
+
+
+    # We'll be building the fibonacci series from the bottom up
+    # so we'll need to track the previous 2 numbers at each step
+    prev_prev = 0  # 0th fibonacci
+    prev = 1       # 1st fibonacci
+
+
+    for _ in xrange(n - 1):
+        # Iteration 1: current = 2nd fibonacci
+        # Iteration 2: current = 3rd fibonacci
+        # Iteration 3: current = 4th fibonacci
+        # To get nth fibonacci ... do n-1 iterations.
+        current = prev + prev_prev
+        prev_prev = prev
+        prev = current
+
+
+    return current
+
+
+Complexity O(N) for time and O(1) space
+
+
+# --------------------------------------------------------------
+16
+The Cake Thief 
+You've hit the motherload: the cake vault of the Queen of
+England. Figure out how much of each cake to carry out to
+maximize profit.
+
+
+ in q_google.txt
+
+
+# --------------------------------------------------------------
+17
+JavaScript Scope 
+There's something tricky going on with scope in this JavaScript.
+Can you guess what will get logged to the console?
+
+
+    var text = 'outside';
+    function logIt(){
+        console.log(text);
+        var text = 'inside';
+    };
+    logIt();
+
+
+Solution: it will print "undefined"
+Explanation - Hoisting: the "var" declaration from outside
+ (but NOT the assignment)
+will be effectively put on top of function scope like this:
+
+
+    var text = 'outside';
+    function logIt(){
+        var text;
+        console.log(text);
+        text = 'inside';
+    };
+    logIt();
+
+
+# --------------------------------------------------------------
+18
+What's Wrong with This JavaScript? 
+There's a tricky bug in this JavaScript. Can you find it? 
+    <button id="btn-0">Button 1!</button>
+    <button id="btn-1">Button 2!</button>
+    <button id="btn-2">Button 3!</button>
+    
+    <script type="text/javascript">
+        var prizes = ['A Unicorn!', 'A Hug!', 'Fresh Laundry!'];
+        for (var btnNum = 0; btnNum < prizes.length; btnNum++) {
+            // for each of our buttons, when the user clicks it...
+            document.getElementById('btn-' + btnNum).onclick = function() {
+                // tell her what she's won!
+                alert(prizes[btnNum]);
+            };
+        }
+    </script>
+
+
+Problem: The user's prize is always undefined!
+A function accesses a variable "btnNum" outside its scope.
+When the value held by the variable changes, the function gets that new value. 
+By the time the user starts pressing buttons, our loop will have 
+already completed and btnNum will be 3, 
+so each of our anonymous functions will get 3 for btnNum.
+But "prizes" has three elements with indices 0,1,2.
+Accessing a nonexistent index in an array returns undefined
+
+
+Here is a fix using outer function which accepts the "btnNum":
+
+
+    ...
+            document.getElementById('btn-' + btnNum).onclick = function(frozenBtnNum){
+                return function() {
+                    // tell her what she's won!
+                    alert(prizes[frozenBtnNum]);
+                };
+            }(btnNum);
+    ....
+
+
+# --------------------------------------------------------------
+19
+Implement A Queue With Two Stacks 
+Implement a queue with two stacks. Assume you already have a
+stack implementation.
+
+
+ in q_fb.txt
+
+
+# --------------------------------------------------------------
+20
+Largest Stack 
+You've implemented a Stack class, but you want to access the
+largest element in your stack from time to time. Write an
+augmented LargestStack class.
+
+
+Solution - maintain maximums in a separate stack.
+
+
+    class Stack(object):
+    
+        def __init__(self):
+            """Initialize an empty stack"""
+            self.items = []
+    
+        def push(self, item):
+            """Push new item to stack"""
+            self.items.append(item)
+    
+        def pop(self):
+            """Remove and return last item"""
+            # If the stack is empty, return None
+            # (it would also be reasonable to throw an exception)
+            if not self.items:
+                return None
+    
+            return self.items.pop()
+    
+        def peek(self):
+            """See what the last item is"""
+            if not self.items:
+                return None
+            return self.items[-1]
+
+
+    class MaxStack(object):
+    
+        def __init__(self):
+            self.stack = Stack()
+            self.maxes_stack = Stack()
+    
+        def push(self, item):
+            """Add a new item to the top of our stack."""
+            self.stack.push(item)
+    
+            # If the item is greater than or equal to the last item in maxes_stack,
+            # it's the new max! So we'll add it to maxes_stack.
+            if self.maxes_stack.peek() is None or item >= self.maxes_stack.peek():
+                self.maxes_stack.push(item)
+    
+        def pop(self):
+            """Remove and return the top item from our stack."""
+            item = self.stack.pop()
+    
+            # If it equals the top item in maxes_stack, they must have been pushed
+            # in together. So we'll pop it out of maxes_stack too.
+            if item == self.maxes_stack.peek():
+                self.maxes_stack.pop()
+    
+            return item
+    
+        def get_max(self):
+            """The last item in maxes_stack is the max item in our stack."""
+            return self.maxes_stack.peek()
+
+
+# --------------------------------------------------------------
+21
+The Stolen Breakfast Drone 
+In a beautiful Amazon utopia where breakfast is delivered by
+drones, one drone has gone missing. Write a function to figure
+out which one is missing.
+Given the list of IDs, which contains many duplicate integers 
+and one unique integer, find the unique integer.
+
+
+Solution - use XOR:
+
+
+def find_unique_delivery_id(delivery_ids):
+    unique_delivery_id = 0
+
+
+    for delivery_id in delivery_ids:
+        unique_delivery_id ^= delivery_id
+
+
+    return unique_delivery_id
+
+
+# --------------------------------------------------------------
+22
+Delete Node 
+Write a function to delete a node from a linked list. Turns out
+you can do it in constant time!
+
+
+    class LinkedListNode(object):
+    
+        def __init__(self, value):
+            self.value = value
+            self.next  = None
+    
+    a = LinkedListNode('A')
+    b = LinkedListNode('B')
+    c = LinkedListNode('C')
+    
+    a.next = b
+    b.next = c
+    
+    delete_node(b)
+
+
+
+
+    def delete_node(node_to_delete):
+        # Get the input node's next node, the one we want to skip to
+        next_node = node_to_delete.next
+    
+        if next_node:
+            # Replace the input node's value and pointer with the next
+            # node's value and pointer. The previous node now effectively
+            # skips over the input node
+            node_to_delete.value = next_node.value
+            node_to_delete.next  = next_node.next
+        else:
+            # Eep, we're trying to delete the last node!
+            raise Exception("Can't delete the last node with this technique!")
+
+
+Complexity: O(1) for time and space
+
+
+# --------------------------------------------------------------
+23
+Does This Linked List Have A Cycle? 
+Check to see if a linked list has a cycle. We'll start with a
+simple solution and move on to some pretty tricky ones.
+
+
+ in q_fb.txt
+
+
+# --------------------------------------------------------------
+24
+Reverse A Linked List 
+Write a function to reverse a linked list in-place.
+
+
+Solution
+In one pass from head to tail of our input list, we point each 
+node's next pointer to the previous item.
+
+
+ in q_google.txt
+
+
+# --------------------------------------------------------------
+25
+Kth to Last Node in a Singly-Linked List 
+Find the kth to last node in a singly-linked list. We'll start
+with a simple solution and move on to some clever tricks. keep
+reading 
+
+
+Solution 1:
+  Walk 1st time to get the length of the list N.
+  Walk 2nd time to (N-k)th node.
+Solution 2:
+  maintain a k-wide "stick" in one walk.
+    while right_node.next:
+        left_node  = left_node.next
+        right_node = right_node.next
+
+
+# --------------------------------------------------------------
+26
+Reverse String in Place 
+Write a function to reverse a string in-place.
+Solution: convert string to list, do swapping, then join
+
+
+    def reverse(string):
+        string_list = list(string)
+    
+        left_index  = 0
+        right_index = len(string_list) - 1
+        while left_index < right_index:
+            # Swap characters
+            string_list[left_index], string_list[right_index] = \
+                string_list[right_index], string_list[left_index]
+            # Move towards middle
+            left_index  += 1
+            right_index -= 1
+    
+        return ''.join(string_list)
+
+
+Complexity: O(N) time, O(1) space
+
+
+# --------------------------------------------------------------
+27
+Reverse Words 
+Write a function to reverse the word order of a string
+presented as a lsit of chars, in-place. 
+
+
+Solution:
+  step1: reverse all chars in the whole string
+  step2: reverse each word in place
+
+
+def rev_chars(arr, idx1, idx2):
+    # Walk towards the middle, from both sides
+    while idx1 < idx2:
+        # Swap the left char and right char
+        arr[idx1], arr[idx2] = arr[idx2], arr[idx1]
+        idx1  += 1
+        idx2 -= 1
+
+
+def reverse_words(arr):
+    # First we reverse all the chars in the entire message
+    rev_chars(arr, 0, len(arr)-1)
+
+
+    idx1 = 0
+
+
+    for ii in range(len(arr) + 1):
+        if (ii == len(arr)) or (arr[ii] == ' '):
+            rev_chars(arr, idx1, ii - 1)
+            idx1 = i + 1
+
+
+Complexity: O(N) time, O(1) space
+
+
+# --------------------------------------------------------------
+28
+Parenthesis Matching 
+Write a function that finds the corresponding closing
+parenthesis given the position of an opening parenthesis in a
+string.
+
+
+Solution - walk and count open/close parens.
+
+
+    def get_closing_paren(sentence, opening_paren_index):
+        open_nested_parens = 0
+        position = opening_paren_index + 1
+    
+        while position <= len(sentence) - 1:
+            char = sentence[position]
+    
+            if char == '(':
+                open_nested_parens += 1
+            elif char == ')':
+                if open_nested_parens == 0:
+                    return position
+                else:
+                    open_nested_parens -= 1
+    
+            position += 1
+    
+        raise Exception("No closing parenthesis :(")
+
+
+Complexity: O(N) time, O(1) space
+
+
+# --------------------------------------------------------------
+29
+Bracket Validator 
+Write a super-simple parser of JavaScript code 
+that can find unmatched brackets.
+
+
+def is_valid(code):
+    openers_to_closers = {
+        '(' : ')',
+        '{' : '}',
+        '[' : ']'
+    }
+
+
+    openers = frozenset(openers_to_closers.keys())
+    closers = frozenset(openers_to_closers.values())
+
+
+    openers_stack = []
+
+
+    for char in code:
+        if char in openers:
+            openers_stack.append(char)
+        elif char in closers:
+            if not openers_stack:
+                return False
+            else:
+                last_unclosed_opener = openers_stack.pop()
+
+
+                # if this closer doesn't correspond to the most recently
+                # seen unclosed opener, short-circuit, returning false
+                if not openers_to_closers[last_unclosed_opener] == char:
+                    return False
+
+
+    return openers_stack == []
+
+
+Complexity
+O(n) time, and O(n) space 
+
+
+# --------------------------------------------------------------
+30
+Permutation Palindrome 
+Write an efficient function that checks whether some permutation
+of a string is a palindrome (example: civic)
+
+
+Solution: check that we have no more than 1 character appearing 
+odd number of times.
+
+
+ in q_fb.txt
+
+
+# --------------------------------------------------------------
+31
+Recursive String Permutations 
+Write a recursive function generating all permutations of a string.
+
+
+Solution: 
+    If we're making all permutations for "cat," we take all
+    permutations for "ca" and then put "t" in each possible
+    position in each of those permutations.
+    We use this approach recursively:
+
+
+    def get_permutations(ss):
+        if len(string) <= 1:
+            return set([ss])
+        all_except_last = ss[:-1]
+        last_char = ss[-1]
+    
+        # Recursive call: get all possible permutations 
+        # for all chars except last
+        perm_all_except_last = get_permutations(all_except_last)
+    
+        # Put the last char in all possible positions 
+        # for each of the above permutations
+        permutations = set()
+        for perm in perm_all_except_last:
+            for idx in range(len(all_except_last) + 1):
+                permutation = (perm[:idx]+last_char+perm[idx:])
+                permutations.add(permutation)
+    
+        return permutations
+
+
+# --------------------------------------------------------------
+32
+Top Scores 
+Efficiently sort numbers in an array, where each number is below
+a certain maximum.
+
+
+Solution - use "counting sort"
+
+
+    def sort_scores(unsorted_scores, highest_possible_score):
+    
+        # list of 0s at indices 0..highest_possible_score
+        score_counts = [0] * (highest_possible_score+1)
+    
+        # populate score_counts
+        for score in unsorted_scores:
+            score_counts[score] += 1
+    
+        # populate the final sorted list
+        sorted_scores = []
+    
+        # for each item in score_counts (from top scores down)
+        for score in range(len(score_counts) - 1, -1, -1):
+            count = score_counts[score]
+            for _ in range(count):
+                sorted_scores.append(score)
+    
+        return sorted_scores
+
+
+Complexity O(n) time and O(n) space
+
+
+# --------------------------------------------------------------
+33
+Which Appears Twice 
+We have array of (N+1) numbers with values 1..N. 
+We know that only one number is duplicated.
+Find it.
+
+
+Solution:  sum(all_numbers) - N*(N+1)/2
+
+
+# --------------------------------------------------------------
+34
+Word Cloud Data 
+You're building a word cloud. Write a function to figure out how
+many times each word appears so we know how big to make each
+word in the cloud.
+
+
+ in q_google.txt
+
+
+# --------------------------------------------------------------
+35
+In-Place Shuffle 
+Do an in-place shuffle on an array of numbers. 
+The shuffle must be "uniform," meaning each item in the original
+list must have the same probability of ending up in each spot 
+in the final list.
+Assume that you have a function get_random(floor, ceiling) 
+for getting a random integer that is >= floor and <= ceiling.
+
+
+Solution: semi-famous algorithm known as the Fisher-Yates 
+    shuffle (sometimes called the Knuth shuffle).
+
+
+    import random
+    
+    def get_random(floor, ceiling):
+        return random.randrange(floor, ceiling + 1)
+    
+    def shuffle(lst):
+        if len(lst) <= 1:
+            return lst
+        nn = len(lst) - 1
+        for ii in xrange(0, nn):
+            rr = get_random(ii, nn)
+            if rr != ii:
+                lst[ii], lst[rr] = lst[rr], lst[ii]
+
+
+
+
+Complexity O(n) time and O(1) space
+
+
+# --------------------------------------------------------------
+36
+Single Riffle Shuffle 
+Write a function to tell us if a deck of cards is a single
+riffle of two other halves.
+
+
+ in q_fb.txt
+
+
+# --------------------------------------------------------------
+37
+Simulate 5-sided die 
+Given a 7-sided die, make a 5-sided die.
+
+
+  def rand5():
+    result = 7  # arbitrarily large
+    while result > 5:
+        result = rand7() // re-roll
+    return result
+
+
+# --------------------------------------------------------------
+38
+Simulate 7-sided die 
+Given a 5-sided die, make a 7-sided die.
+
+
+    def rand7():
+        while True:
+            roll1 = rand5()
+            roll2 = rand5()
+            outcome_number = (roll1-1) * 5 + (roll2-1) + 1
+            if outcome_number > 21:
+                continue
+            return outcome_number % 7 + 1
+
+
+ in q_google.txt
+
+
+# --------------------------------------------------------------
+39
+Two Egg Problem 
+A building has 100 floors. Figure out the highest floor an egg
+can be dropped from without breaking.
+
+
+ in q_google.txt
+
+
+# --------------------------------------------------------------
+40
+Find Repeat, Space Edition 
+Find Duplicate, Space Edition
+Figure out which number is repeated. But here's the catch:
+optimize for space.
+
+
+ in q_google.txt
+
+
+# --------------------------------------------------------------
+41
+Find Repeat, Space Edition BEAST MODE 
+Fine Duplicate, Space Edition BEAST MODE
+Figure out which number is repeated. But here's the catch: do it
+in linear time and constant space!
+
+
+ in q_google.txt
+
+
+# --------------------------------------------------------------
+42
+Find Duplicate Files 
+Your friend copied a bunch of your files and put them in random
+places around your hard drive. Write a function to undo the
+damage.
+
+
+ in q_google.txt
+
+
+# --------------------------------------------------------------
+43
+Merge Sorted Arrays 
+Write a function for consolidating cookie orders and taking over
+the world.
+
+
+ - see in q_fb.txt
+
+
+# --------------------------------------------------------------
+44
+URL Shortener 
+Design a URL shortener, like bit.ly
+
+
+XXXXXXXXXXXXXXXXXXXX
+
+
+# --------------------------------------------------------------
+45
+Graph Coloring 
+Color the nodes in a graph so adjacent nodes always have
+different colors.
+
+
+XXXXXXXXXXXXXXXXXXXX
+
+
+# --------------------------------------------------------------
+46
+MeshMessage 
+You wrote a trendy new messaging app, MeshMessage, to get around
+flaky cell phone coverage. But messages are taking too long to
+send...
+
+
+Given information about active users on the network, find the 
+shortest route for a message from one user (the sender) to another
+(the recipient). Return a list of users that make up this route.
+
+
+    from collections import deque
+    
+    def reconstruct_path(previous_nodes, start_node, end_node):
+    
+        reversed_shortest_path = []
+    
+        # start from the end of the path and work backwards
+        current_node = end_node
+    
+        while current_node:
+            reversed_shortest_path.append(current_node)
+            current_node = previous_nodes[current_node]
+    
+        # reverse our path to get the right order
+        reversed_shortest_path.reverse()  # flip it around, in place
+        return reversed_shortest_path  # no longer reversed
+    
+    def bfs_get_path(graph, start_node, end_node):
+    
+        if start_node not in graph:
+            raise Exception('Start node not in graph')
+        if end_node not in graph:
+            raise Exception('End node not in graph')
+    
+        nodes_to_visit = deque()
+        nodes_to_visit.append(start_node)
+    
+        # keep track of how we got to each node
+        # we'll use this to reconstruct the shortest path at the end
+        # we'll ALSO use this to keep track of which nodes we've
+        # already visited
+        how_we_reached_nodes = {start_node: None}
+    
+        while len(nodes_to_visit) > 0:
+            current_node = nodes_to_visit.popleft()
+    
+            # stop when we reach the end node
+            if current_node == end_node:
+                return reconstruct_path(how_we_reached_nodes, start_node, end_node)
+    
+            for neighbor in graph[current_node]:
+                if neighbor not in how_we_reached_nodes:
+                    nodes_to_visit.append(neighbor)
+                    how_we_reached_nodes[neighbor] = current_node
+    
+        # if we get here, then we never found the end node
+        # so there's NO path from start_node to end_node
+        return None
+
+
+Complexity: O(M+N) time, O(N)space
+
+
+XXXXXXXXXXXXXXXXXXXX
+
+
+# --------------------------------------------------------------

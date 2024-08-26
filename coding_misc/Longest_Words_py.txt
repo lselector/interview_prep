@@ -1,0 +1,75 @@
+﻿# python3
+
+
+# --------------------------------------------------------------
+# given;
+#   word_dict - a dictionary (Set) of valid words 
+#   char_string - a string of characters
+# find the maximum length of a valid word which could be composed
+# from characters in the string. Return a list of all those long words.
+#
+# Note - we presume that everything is in English (26 chars) and in small letters
+#
+# Note: There are probably solutions online, for example:
+#   https://codereview.stackexchange.com/questions/6634/longest-words-in-dictionary-that-can-be-constructed-from-a-list-of-letters
+#   https://gist.github.com/s3thi/1441776
+#
+# The key difficulty is to calculate all permutations of given length
+# Note: You should not use specialized libraries.
+#   for example, you should not use itertools:
+#     print(list(itertools.permutations([1,2,3], 2)))
+#         [(1, 2), (1, 3), (2, 1), (2, 3), (3, 1), (3, 2)]
+#
+# Here is a discussion of how it can be done recusrsively:
+#   https://codereview.stackexchange.com/questions/12858/generating-all-combinations-and-permutations-of-a-set-of-symbols
+#   https://www.geeksforgeeks.org/print-all-permutations-with-repetition-of-characters/
+#   https://stackoverflow.com/questions/464864/how-to-get-all-possible-combinations-of-a-list-s-elements
+#   https://www.geeksforgeeks.org/print-all-possible-combinations-of-r-elements-in-a-given-array-of-size-n/
+#
+# Note that if the string is relatively long, the number of 
+# permutations can become huge.
+# for N=20, N! = math.factorial(20) = 2,432,902,008,176,640,000 
+# So it may be better to go in the oposite direction.
+# Start from the dictionary (which hardly has more than 100,000 words),
+# start with longest words - and see if the can be made from given letters.
+# The solution below does jsut that. 
+# --------------------------------------------------------------
+
+import os, sys
+
+# --------------------------------------------------------------
+def can_make(word, letters):
+    """ 
+    # Return True if "word" can be generated using only 
+    # the letters in the list "letters" 
+    """
+    if len(word) > len(letters): return False
+    
+    l = letters[:] # copy of the list
+    for index, letter in enumerate(word):
+        if letter in l: 
+            l.remove(letter) # removes once occurence
+        else: 
+            return False
+        
+    return True
+
+# --------------------------------------------------------------
+if __name__ == "__main__":
+    mystr = "crocodilegohome"
+    letters = list(mystr)
+    myset = set(["crocodile","go","home","he"])
+    mylist = list(myset)
+    mylist.sort(key=len)
+    mylist.reverse()
+    long_words = []
+    max_len = 0
+    for w in mylist:
+        if can_make(w, letters):
+            if len(w) >= max_len:
+                max_len = len(w)
+                long_words += [w]
+            else:
+                break
+    print(long_words)
+

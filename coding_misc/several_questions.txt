@@ -1,0 +1,63 @@
+﻿1.
+Given an html page, implement the ctrl-f feature on
+Google Chrome. Do not worry about efficiency or
+completeness, discuss how you would approach it. (This
+made much more sense when drawn out on the white
+board)
+
+
+2.
+You’re on a gameshow where you’re attempting to guess
+5 letter words. Every guess you make will return  _ _
+_ _ _ with the correct letter filled in if there’s a
+match. For instance:
+
+Word: tires
+Guess: trade
+
+Output: t _ _ _ _
+
+You want to get to the correct word in as few guesses
+as possible in as little time as possible. You’re
+given a list of 5 letter words and are guaranteed that
+the answer is in this list. The timer starts AFTER you
+make your first guess (so you may do as many
+calculations as you’d like before your first guess
+without concern for time). Write an algorithm that
+will arrive at the answer in as few guesses and as
+little time as possible after the first guess.
+
+3.
+Implement the set and get methods of a hash table
+where the key will expire after a given amount of
+time. For instance, if the set method is passed 60,
+the key should expire after 60 seconds.
+
+
+4.
+Given a list of lists of words, return a list of all
+combinations, taking one word from each list
+sequentially.
+    
+Ex: input: [[‘Brad’, ‘Lev’], [‘rules’, ‘stinks’]]
+Output: [[‘Brad rules’, ‘Lev rules’, ‘Brad stinks’,
+‘Lev stinks’]] (order of the sentences does not
+matter)
+
+
+5.
+Given:
+  a list of tuples (id, timestamp)
+  a value "t"
+return all sessions that occurred for each id
+such that no two sessions occur within t seconds
+of each other for each id.
+
+
+Ex: 
+  input     [(1,4),(1,9),(1,13),(2,7),(1,23)], 
+            6 
+  output:   {
+                1: [(4,13), (23,23)],
+                2: [(7,7)]
+            }

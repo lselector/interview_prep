@@ -1,0 +1,258 @@
+﻿
+quizlet flashcards (March 25, 2018)
+ - https://quizlet.com/278908230/interview-prep-flash-cards/
+
+
+Largest square of 1s in matrix of size m*n
+Principles: Dynamic Programming, O(m*n), for each
+index, look at the square as if the index is the
+bottom right. If index is zero, ignore. Otherwise,
+look at values in cache for each value in square, take
+the min and add 1. Add this as current value in cache.
+
+
+Find overlap of two rectangles given BL and TR indices
+Principles: O(1), take min of top coordinates minus
+max of bottom coordinates. If either distance is <= 0, 
+return false, else return x*y
+
+
+Implement a queue using two stacks
+Operations take O(n). 
+One stack is the "push" stack, the other the "pop" stack.
+As you move elements one by one from one stack to another, they order reverses.
+Start with both stacks empty
+If adding, push to push stack.
+If popping, first move everything to the pop stack - then pop from it.
+If want to push again, then first move everything back to push stack - and push.
+So we constantly moving the whole stack contents back and forth between two stacks.
+
+
+Find longest substring of matching parentheses
+Principles: Use a stack. Push -1 to stack. Iterate
+through string. 
+  if i is "(":
+    push i
+  else:
+    pop and check if stack is empty. 
+    If empty:
+      push -1 back
+    else take the max of max_len and i - stack(len(stack) - 1) (top of stack)
+
+
+Largest rectangle in histrogram
+Principles: Use a stack. O(n), iterate through
+histogram. If current is lte top of stack, append and
+increment. Else, pop, set width equal to i or I - 1 -
+top of stack and then multiply by hist[i]. Then do
+rest.
+
+Nqueens
+Principles: Use helper functions and recursion.
+Iterate row by row per column and place a queen in
+this column. Then check if it's safe and recurse over
+the next column. It's safe either by checking the row
+and using the distance algorithm or checking upper and
+lower left diagonals. If it's safe, return true. If
+you make it to the last row and N >= columns then you
+have a valid board. Else return false and try the next
+row in this column. This should be able to bubble all
+the way up if it's invalid.
+
+
+Kth most frequently occuring terms
+Principles: Linear time, add counts to a hash map.
+Initialize a list with n+1 empty lists. Then for each
+kv in the hash map, add the key to list i in the list
+of lists. Then add elements starting from the back of
+the list to a results array <- BUCKET SORT
+
+
+Longest consecutive sequence in a list
+Principles: linear, set the list. If i - 1 in the
+list, continue. Otherwise, while loop with a count,
+moving up one each time. Then compare longest.
+
+
+Smallest k elements
+Principles: O(n + (n-k)logk) Use a heap of size k. For
+each element i check if heap max gt i. If so replace
+max with i and bubble down
+
+
+2sum
+Principles: o(n) use a hash map
+
+
+3sum
+Principles: o(n^2) using cartesian product of two
+numbers, then it's the same problem as 2sum
+
+
+Merge Time Intervals
+Principles: nlogn, sort then compare starting times.
+Yield answers or append to a list.
+
+
+Bayes Theorem
+P(A given B) = P(B given A) P(A) / P(B)
+
+
+Palindrome permutation
+Principles: o(n) time and space. Iterate over the
+string. If the letter is in the set, pop it. Else,
+push it. When you're done, if len(set) lte 1, return
+True. Else, return False.
+
+
+Is Unique String
+Principles: o(n) hash the letters if you can.
+Otherwise nlogn sort and compare to the letter next to
+it.
+
+
+Check if two strings are permutations of each other
+Principles: o(n) return false if not same length.
+Otherwise, hash count first string, then hash
+decrement second string.
+
+
+Maximum consecutive sum
+Principle: o(n) iterate from 1 to len-1. Take max of
+current and current + global. If current > global,
+update global.
+
+
+Knn
+Classifies something based on the counts of it's
+nearest neighbors in K distance, where k is a
+hyperparameter
+
+
+Common elements in sorted arrays
+Principles: o(max(m,n)) use two pointers and iterate
+the pointer of the lower value. If in both arrays,
+iterate both.
+
+
+Most_frequent element
+Principles: o(n) time and space. Hash the counts and
+check the max count after each. If greater than last
+max, increase the max and store the value.
+
+
+Reverse a string
+Principles: o(n/2) time. Start in the middle and swap
+the letters moving out
+
+
+Word occurence count in document
+Principles: o(num words) time and o(num unique words)
+space. Hash the counts and bucket sort them by
+occurence. Then print backwards.
+
+
+Rotate Matrix 90d
+Princples: quadratic, do it layer by layer and use an
+offset to adjust the positioning.
+
+
+Find all permutations of a string
+Principles: o(n^2*n!) (wtf) find all subsets of 1:n-1
+and weave n into it, weave n-1 into all subsets of :n-
+2 etc . Iterator?
+
+
+Find 2nd largest element of a bst
+Principles: o(height) find largest, then find the
+second largest from here. Go right as far as possible,
+then left once, then right as far as possible. Check
+if current.r.l and current.r.r exist. If they don't,
+current is the answer.
+
+
+Pancake sort
+O(n^2) sort an array by only flipping elements. def
+flip flips the first k elements. Pancake sort finds
+the max element from the right and flips it to the
+end, decrementing in and flipping if the current start
+index does not equal the max.
+
+
+How many ways to walk up n steps stepping 1,2,or 3 at
+a time
+Principles: o(n) populate an array of size n+1 with
+zeros. Memoize and recurse through, where count(n) =
+count(n-1) + count(n-2) + count(n-3)
+
+
+Robot in a Grid
+Principle: o(mn) time, o(mn) space. Traverse backwards
+from end point. Whenever you visit a new node, add it
+to a seen set. If seen, return false. Else, recurse
+backwards to new points in the tree.
+
+
+Magic Index (find arr[i] = i in sorted list)
+Principles: o(logn) use binary search, except you can
+skip all indices between value and index. So if you
+find arr[5] is 3, you can then start recursing back at
+arr[3] since arr[4] can't be 3
+
+
+Generate all subsets
+Principles: o(n*2^n) time t/s. Two approaches: create
+all subsets of one less recursively and add current to
+each subset. Or, generate all binary strings of length
+n and use those. Bit manipulation would be helpful
+here
+
+
+KNN
+Principles: supercised, classifies on the basis of
+proximity given by some distance function. A new data
+point assumes the class of the most popular class
+within a certain radius. Can work great for smaller
+datasets but is expensive to predict as you have to
+compare it to the entire training set. K is a
+hyperparameter of which majority voting occurs among
+the k "closest" data points. Skewed class
+distributions can distort voting and a solution to
+this is to introduce weighted distances.
+
+
+Towers of Hanoi
+Principles: o(2^n) operations. All you need to do is
+recurse move n-1 with a base case, making sure the
+correct stacks are passed to the move function. Short
+answer but tricky to deduce. Move all n-1 discs first,
+then move the nth disc, then move n-1 again.
+
+
+Multiply two numbers without *
+Principles: s smaller and l larger. Use bit shifting
+to add l s/2 times then add s/2 + s/2
+
+
+Perceptron
+A single, simple, artificial neuron. Define small or
+zero valued weights. Predict yhat by multiplying the
+weights times all features. New weights = old weights
++ (y - yhat)*x. Only really works on linearly
+separable datasets.
+
+
+Print out all combos of N pairs of parens
+Principles: recurse with the current count of left and
+right parens left. If left is more than right, return
+bc invalid. Recurse by adding a left to the current
+string and leftRem-1, then a right and rightRem-1.
+
+
+Paint Fill
+Principles: o(mn) for screen mn. We recurse through
+pixels that are the same as the starting color. We
+keep iterating if the current pixel is the same as the
+starting color. You don't need to memoize here. Trick:
+use row, column as var names as opposed to x,y (would
+really be y,x)

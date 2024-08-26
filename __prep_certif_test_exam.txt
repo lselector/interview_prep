@@ -1,0 +1,26 @@
+
+To prepare for online certification exams
+you can search online for practice tests
+with questions and answers.
+There are crowd-sourced websites.
+Some are free, some charge money.
+
+Here are examples:
+  https://www.examtopics.com
+  https://www.testpreptraining.com
+  https://www.whizlabs.com 
+  https://www.itexams.com 
+  https://www.pluralsight.com/cloud-guru
+  coursera 
+
+Also the test providers can offer their own practice tests 
+for example:
+    https://docs.microsoft.com/en-us/learn/
+    https://docs.microsoft.com/en-us/learn/certifications/
+
+    https://docs.microsoft.com/en-us/learn/certifications/browse/?roles=data-scientist
+
+       exam
+       exam + replay
+       exam + replay + practice test
+   

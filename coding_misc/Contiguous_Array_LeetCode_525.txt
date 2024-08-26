@@ -1,0 +1,40 @@
+#! python3
+
+# Given an array having only ones and zeros (up to 50,000 elements).
+# Find max length of a contiguous subarray with equal number of 0s and 1s.
+# Example 1:
+#   Input: [0,1]
+#   Output: 2
+#   Explanation: [0, 1] is the longest one
+#
+# Example 2:
+#   Input: [0,1,0]
+#   Output: 2
+#   Explanation: [0, 1] or [1, 0] are examples of the longest one
+# 
+# Idea:
+#   change all Os to -1s.
+#   Lets go through the array and calculate the running sum()
+#   When we have +1 - the sum goes up, when -1 - it goes down.
+#   The values of the sum we will store in the hash as keys, the value - index
+#   of the first time we got this sum value.
+#   If we hit the same value again (if it is already in the hash), this means
+#   that between these points we had equal number 1s and -1s. So we can calculate
+#   the lengt - and update the max_length as needed.
+#   Complexity O(N) for time and space
+
+class Solution:
+    def findMaxLength(self, nums: List[int]) -> int:
+        mysum = 0
+        myhash = { 0: -1}   # key   - mysum value
+                            # value - leftmost index for this mysum value
+        max_length = 0
+
+        for idx, num in enumerate(nums):
+            mysum = (mysum + 1) if num else (mysum - 1) # go up or down
+            if mysum in myhash:  # good subarray
+                max_length = max( max_length, ( idx - myhash[mysum] ) )
+            else:                # 1st time on this height/depth - update myhash
+                myhash[ mysum ] = idx
+
+        return max_length

@@ -1,0 +1,76 @@
+﻿"""
+#   largest area of a rectangle in histogram
+#   https://www.geeksforgeeks.org/largest-rectangle-under-histogram/
+#
+#   1) Create an empty stack.
+#   
+#   2) Start from first bar, and do following 
+#      for every bar ‘hist[i]’ where ‘i’ varies from 0 to n-1.
+#         (a) Zero, same, or going up:
+#             If stack is empty or hist[i] is same or higher than the bar 
+#             at top of stack, then push index ‘i’ to stack.
+#         b) Going down:
+#            If this bar hist[i] is smaller than the top of stack hist[ts], 
+#            then keep removing the top of stack while top 
+#            of the stack is greater. 
+#            While doing this we will try rectangels as following:
+#              Let the removed bar be hist[ts]. 
+#              Calculate area of rectangle with hist[ts] as smallest bar. 
+#              For hist[tp], the ‘left index’ is previous (previous to ts) 
+#              item in stack and ‘right index’ is ‘i’ (current index).
+#   
+#   3) If the stack is not empty, then one by one remove all bars 
+#      from stack and do step 2.b for every removed bar.
+#      This actually can be acheved by a simple trick - appending 
+#      value [-1] to the histogram at the very beginning.
+"""
+
+# --------------------------------------------------------------
+def calc_max_area(hist): 
+    print(hist)
+    if len(hist) == 0:
+        return 0
+    if len(hist) == 1:
+        return hist[0]
+
+    hist.append(0) # trick to handle the end of the histogram
+    stack = list()
+    max_area = 0
+    ii = 0
+
+    while ii < len(hist): 
+        if (not stack) or (hist[stack[-1]] <= hist[ii]): 
+            stack.append(ii) 
+            print(f"appended: {stack}")
+            ii += 1
+        else: 
+            ts = stack.pop() # top of stack
+            print(f"  popped {ts}")
+            di = ii
+            if stack:
+                di = (ii - stack[-1] - 1)
+            area = hist[ts] * di
+            print(f"  area = {area}")
+            if area > max_area:
+                max_area = area
+                print(f"    max_area = {max_area}")
+
+    return max_area 
+
+# --------------------------------------------------------------
+if __name__ == "__main__" :
+    # hist = []
+    # hist = [0]
+    # hist = [3]
+    # hist = [6, 2, 5, 4, 5, 1, 6]
+    hist = [5,0,0,0,0,6]
+    # hist = [5,1,1,1,1,1,1,1,6]
+    # hist = [3, 6, 9, 10, 11,11,11,12,12,12,13,13,13,14]
+    # hist = [2, 1, 2, 50,50,50,50]
+    # hist = [2, 1, 5, 6, 2, 3]
+    # hist = [5,4,3,2,1]
+    # hist = [1,2,1,2,1,2,1,2,1]
+
+    max_area = calc_max_area(hist)
+    print(max_area)
+

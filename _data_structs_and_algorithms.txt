@@ -1,0 +1,454 @@
+
+Data Structures and Algorithms
+A summary to pass a technical interview
+
+During the interview:
+  - project excitement about the company and about the topics.
+    Excitement, kindness, good karma mean more than technicalities.
+  - Consider it as not an exam, but rather as a work situation 
+    where you and your interviewer are solving real problem together
+  - you may not know the answer - but you are evaluated how 
+    you are communicating your thoughts and collaborating.
+  so:
+  - when given a problem - listen, repeat it 
+    and ask questions to make sure you understand it
+    make a simple example
+  - ask if you can make certain assumptions, etc.
+  - be really curious about finding a really good solution
+  - verbalize your thought process
+  - first code the very simple not-optimized solution
+    (brute-force) and calculate it's time and space complexity
+    (for example, O(N^2) time, ... space)
+  - then discuss possible methods to optimize the solution
+    formulate steps as comments and modules, fill in code,
+    consider edge cases (zeros, nulls, beginning, end, etc.)
+    test the code (walk through)
+  - don't be nervous if you don't know specific programming syntax.
+    Most important is to get the logic, the thinking
+
+Below some short notes about data structures and algorithms.
+You need to understand them.
+Then do lots of practice problems to learn how to use them.
+There are many sites with questions and answers, books, youtube videos, etc.
+# ---------------------------------------------------------
+Books:
+ - book: Introduction to Algorithms, 3rd Edition (The MIT Press)
+ - book: Cracking the Coding Interview: 189 Programming Questions 
+   and Solutions 6th Edition - by Gayle Laakmann McDowell
+ - book: Computer Algorithms - by Horowitz, Sahni, Rajsekaran
+ - book: Data Structures and Algorithms - by Aho, Ullman, Hopcroft
+ - book: Algorithm Design: Foundations, Analysis, and Internet Examples
+   by Goodrich, Tamassia
+ - book: Designing Data-Intensive Applications - by Martin Kleppmann
+
+Training websites:
+  - https://leetcode.com/
+  - https://www.hackerrank.com/
+  - https://www.educative.io/
+  - https://www.interviewcake.com/
+Youtube - multiple channels, for example: Gaurav Sen
+  - https://www.youtube.com/watch?v=_5vrfuwhvlQ
+  - https://www.youtube.com/watch?v=zaRkONvyGr8
+  etc.
+# ---------------------------------------------------------
+
+=======================================
+array - arr[i] - elements have same type
+
+=======================================
+list  - lst[i] - like array but:
+  - elements may have different size and type
+  - elements may be complext structures (lists, dicts, etc.)
+  [1,2,3]
+  [1,"dog",[2,3]]
+
+=======================================
+tuple - like a list, but immutable (can not be changed)
+  (1,2,3)
+  ((1,2),(3,4))
+
+=======================================
+string - "abcde fghij" - ordered set of characters
+
+=======================================
+sequence - any ordered set (list, tuples, string, ...)
+
+=======================================
+index - numbering elements in a sequence (usually starts with 0)
+        aa[i]
+        aa[i][j]
+
+=======================================
+slice - subset of elements of a sequence, for example:
+    aa = "mama papa"
+          012345678
+    bb = aa[2:5] = "ma p"   (2 - included, 5 - not included)
+
+=======================================
+stack (FILO = First In Last Out)
+    st = [1,2,3]
+    st.append(4)     [1,2,3,4]
+    aa = st.pop()    aa=4, st=[1,2,3]
+
+=======================================
+queue (FIFO = First In First Out)
+    import collections
+    qq = collections.deque()
+    for ii in range(6): 
+        qq.append(ii)  # qq == deque([0, 1, 2, 3, 4, 5])
+    aa = qq.popleft()  # 0
+    bb = qq.popleft()  # 1
+                       # qq == deque([2, 3, 4, 5])
+
+=======================================
+priority queue
+  Suppose that we form a queue of tickets.
+  Each ticket is described by a tuple with two numbers:
+    (priority_num, ticket_num)
+    priority_num : 1..10, where 1=highest, 10=lowest priority
+    ticket_num   : sequentially growing number
+  As tickets enter the queue, we sort the queue
+    (by priority_num, ticket_num)
+    so that tickets with higher priority (lower priority_num)
+    will move forward. 
+    And within same priority, "earlier" tickets (with lower ticket_num)
+    will move forward.
+  Usually the queue was sorted before adding a new element.
+    So sorting simply means moving the element forward until if 
+    finds its place.
+  Usually priority queue is implemented using a min-heap structure
+    (see later in this document)
+
+=======================================
+set (unique elements)
+
+aa = set(range(1,10))  # {1, 2, 3, 4, 5, 6, 7, 8, 9}
+
+bb = set(range(5,15))  # {5, 6, 7, 8, 9, 10, 11, 12, 13, 14}
+
+aa - bb    # {1, 2, 3, 4}
+
+bb - aa    # {10, 11, 12, 13, 14}
+
+aa | bb    # {1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14}
+
+aa & bb    # {5, 6, 7, 8, 9}
+
+aa ^ bb    # {1, 2, 3, 4, 10, 11, 12, 13, 14}
+
+=======================================
+hash (hashmap, dict)
+   stores key-value pairs
+   famous for having constant-time for insert/delete/read
+
+aa = {"k1":"v1", "k2":55}  # {'k1': 'v1', 'k2': 55}
+
+aa['k3'] = 33              # {'k1': 'v1', 'k2': 55, 'k3': 33}
+
+if 'k2' in aa:
+    del aa['k2']           # {'k1': 'v1', 'k3': 33}
+
+if 'k2' in aa:
+    aa['k2'] += 1
+else:
+    aa['k2'] = 1
+
+Merging two dicts: 
+  starting python 3.5: z = (**d1, **d2)
+  starting python 3.9: z = d1 | d2
+
+Using defaultdict:
+
+from collections import defaultdict
+dd = defaultdict(list)
+dd['k1'].append(1)
+dd['k1'].append(2)
+dd['k1'].append(3)
+for kk in dd.keys():
+    print(f"{kk} => {dd[kk]}")   # k1 => [1, 2, 3]
+
+How hash works:
+  We make an array of buckets.
+  The key is mapped to one of the buckets using a simple hashing function
+  the tuple (key,val) is placed in this bucket.
+  Reading/deleting by key - same hashing function is used to loate the item
+
+   # ------------------------------
+   Example of hashing function:
+   # ------------------------------
+   hash = 0
+   for char in key_str:
+     hash = hash*33 + ord(char)
+   idx = hash / num_buckets
+   # ------------------------------
+
+=======================================
+Consistent hashing  (ring hash)
+   
+   XXXXXXXXX
+
+=======================================
+Bloom filter
+  Imagine that we have a huge lookup table (~millions of words)
+  and we testing if a word is in this table or not. 
+  We may use a huge hash on disk, causing big disk I/O.
+
+  Bloom filter uses a small compact bitmap instead of big hash.
+  This allows to reject most negatives - while allowing very few false-positives.
+  The negatives are definitely negatives, but positives 
+  are "maybe" positives.
+
+  An empty Bloom filter is a bit array of m bits, all set to 0.
+  There must also be k different hash functions defined, 
+  each of which maps an element to one of m bits (sets it to 1).
+  So if we use k hash functions - we can get up to "k" bits set.
+  Example: m=30, k=10
+  To query for an element (test whether it is in the set), 
+  feed it to each of the k hash functions to get k array positions. 
+  If any of the bits at these positions is 0, the element is not in the set.
+  If all are 1, then it may be positive - or false-positive.
+  resulting in a false positive. 
+
+  If map is big enough, the patterns will be sparse, 
+  and probability of false-positives very low.
+  - https://hur.st/bloomfilter
+=======================================
+BST (Binary Search Tree)
+  rebalancing BST (rotations)
+  height of the tree h = lg2(N)..N, search time ~h
+=======================================
+Trie - prefix tree, good for words/characters
+  (one node may have 26 children)
+  typically implemented using dictionaries 
+=======================================
+Binary Heaps (MaxHeap and MinHeap)
+    data structure which looks like binary tree
+    where each parent is >= (or <= for min-heap) than values of children
+Binary heaps are a common way of implementing priority queues. 
+Given an array we can "heapify" it in place by swapping elements.
+0 - top (root) element
+1,2 - next layer (left and right children)
+3,4,5,6 - next layer
+etc.
+last parent's idx = floor(N/2) - 1
+
+Time complexity:
+    building heap - O(N)
+    push (at bottom) and adjust - O(lg(N))
+    pop (from top) and adjust   - O(lg(N))
+    heap sort - O(N*log(N))
+https://stackoverflow.com/questions/9755721/how-can-building-a-heap-be-on-time-complexity
+=======================================
+linked list
+  head of the list
+  going through the list
+  finding cycle in the linked list by using turtle and rabbit (slow and fast runners)
+=======================================
+sorting:
+  in-place
+  stable sort (preserves order of duplicates)
+=== bubble sort   O(n^2)
+  (go through whole list swapping neighbors until nothing to swap)
+=== selection sort O(n^2)
+  divide list into two portions: left sorted, right not sorted yet
+  on each step: select min value from right - append to left
+=== insert sort   O(n^2)
+  (take one element, insert it in its place on the left, repeat)
+=== merge sort  O(n log n)
+  binary division, sort small pieces, then merge them layer by layer 
+=== heap sort O(n log n)
+  make MinHeap in the array, 
+  take min value, out of the heap, fix the heap, repeat.
+=== quick sort O(n log n) - or O(n^2) in worst case
+  pick an element in the middle called a pivot
+  move to the right of it all elements which are > pivot
+  move to the left of it all elements which are < pivot
+  Now recursively apply the same process to left and right subarrays.
+=== tim sort O(n) - O(n log n)
+   used in python, combination of merge and insertion sort algs.
+   takes advantage of runs of consecutive ordered elements
+=======================================
+topological sort
+   schedule a sequence of jobs based on their dependencies. 
+   Example: make files for compilation, etc.
+   Dependencies may be represented by a graph:
+      jobs are points (vertices of a graph)
+      x ---> y  means that we need to calculate "x" before "y"
+      (x needed for calculating "y")
+   Kahn algorithm:
+     jobs=[1,2,3,4, 5, 6]
+     dependencies = [(1,3), (3,2), (3,4), (5,6)]  
+     # (m, n) where n is a dependency of m
+     1. for each job calculate number of dependencies NoD
+     2. find jobs with no dependencies - put them into a queue.
+     3. process the queue one by one like this:
+       take queue element, append to the output
+       take its dependencies, reduce their NoD by one
+       if NoD for any of them becomes zero, add those to the queue
+Complexity: O(Njobs + Ndependencies)
+=======================================
+Searches: 
+  Binary search
+  DFS (Depth-First Search) - recursion 
+  BFS (Breadth-First Search) - queue, level by level
+=======================================
+Note: Recursion can always be rewritten as iteration
+
+factorial_recursive(n):
+    if n<=1:
+        return 1
+    else:
+        return n * factorial_recursive(n-1)
+
+factorial_iterative(n):
+    ff = 1
+    for ii in range(1,n+1):
+        ff *= ii
+    return ff
+
+=======================================
+Algorithm complexity (time and space):
+Big "O" notation
+  O(1), O(N) , O(N^2) , O(N*log(N)), O(p*k), etc.
+==================================
+bottoms-up and top-down algorithms
+divide-and-conquer
+greediness
+==================================
+declarative vs imperative procedural programming
+==================================
+functional programming
+  use pure functions 
+  avoid side effects (global variables, etc.)
+==================================
+dynamic programming = memoization
+    (caching results to reuse them instead of recalculating)
+    common to use a dictionary for that
+==================================
+Bit manipulation
+  binary positive, negative, addition, shifting, masks
+        & – Bitwise AND
+        | – Bitwise OR
+        ~ – Bitwise NOT
+        ^ – XOR
+        << – Left Shift
+        >> – Right Shift
+==================================
+Some tricks and examples:
+    merging two sorted lists
+    finding largest word
+    finding duplicates (use hash)
+    func(N) as func of smaller numbers
+    calculate Fibonacci numbers
+    coin-change (using memoization)
+    recursive staircase (1,2,3 steps - how many ways?)
+    shortest reach path (using BFSearch)
+    balanced parentheses (using stack)
+    queue with 2 stacks
+    keep contacts in a Trie
+    mirroring BST
+    finding the 2nd largest value in BST (binary tree)
+    (or verifying that the tree is correct)
+==================================
+Turing Machine (TM) (Turing, 1936) - an very simple abstract 
+    computational machine.
+    An infinite memory tape is divided into discrete "cells".
+    The machine positions its "head" over a cell and "reads" it.
+    Then it uses a "finite table" of instructions/rules to:
+      - optionally update the cell
+      - move head by one position left or right
+      - or halt the computation.
+
+NTM (Non-deterministic TM) - more than one possible action
+    can be taken in some situations. A NTM effectively is able 
+    to duplicate itself at any time, and have each duplicate 
+    take a different execution path.
+
+Turing-complete set of rules - a set which can be used 
+                               to simulate a Turing Machine.
+
+Intractable problem - can be solved in theory, but in reality
+                      takes too much resources/time
+
+Intractability Reductions.
+  Reductions are a way to show that two 
+  problems are essentially identical. 
+  A fast algorithm for one of the problems 
+  implies a fast algorithm for the other.
+
+==================================
+
+Time-complexity classes: P, NP, NP-hard, NP-complete problems
+  P (Polinomial time by a deterministic Turing machine)
+  NP (Nondeterministic Polynomial) - set of decision problems
+     solvable in polynomial time by a NTM (Non-deterministic Turing Machine).
+     Also can be verified in polynomial time by deterministic T.M.
+     Some claim that NP = P, but it is not proven. 
+     The Clay Mathematics Institute is offering a US$1 million reward 
+     to anyone who has a formal proof that P=NP or that P≠NP.
+  NP-hard is the class of decision problems to which all problems 
+     in NP can be reduced to in polynomial time 
+     by a TM (Deterministic Turing Machine). 
+     NP-hard is at least as hard to solve as NP.
+  NP-complete is the intersection of NP-hard and NP.
+     NP-complete is the class of decision problems in NP 
+     to which all other problems in NP can be reduced to 
+     in polynomial time by a TM (Deterministic Turing Machine).
+
+At present, all known algorithms for NP-complete problems 
+require time that is superpolynomial in the input size, 
+and it is unknown whether there are any faster algorithms.
+
+Some NP-complete problems:
+  ( from https://en.wikipedia.org/wiki/NP-completeness )
+  Boolean satisfiability problem (SAT)
+  Knapsack problem
+  Hamiltonian path problem
+  Travelling salesman problem (decision version)
+  Subgraph isomorphism problem
+  Subset sum problem
+  Clique problem
+  Vertex cover problem
+  Independent set problem
+  Dominating set problem
+  Graph coloring problem
+
+==================================
+Minimum spanning tree (MST) is a tree that:
+ - Contains all the nodes (vertices) of the graph.
+ - has no cycles
+ - has minimal total length (sum of "weights" of edges)
+Example - a cable company wanting to lay lines to multiple houses
+while minimizing the amount of cable laid to save money.
+
+==================================
+Kruskal's algorithm (1956) - a minimum-spanning-tree algorithm 
+  which finds an edge of the least possible weight 
+  that connects any two trees in the forest.
+  - https://en.wikipedia.org/wiki/Kruskal%27s_algorithm
+
+==================================
+Shortest Path finding (road navigators, etc.)
+ - https://en.wikipedia.org/wiki/Shortest_path_problem
+  Multiple algorithms:
+    - Dijkstra - single-source shortest path problem with non-negative edge weight.
+    - Bellman–Ford - single-source problem if edge weights may be negative.
+    - A* search algorithm - single pair shortest path using heuristics 
+                            to try to speed up the search.
+    - Floyd–Warshall - all pairs shortest paths.
+    - Johnson's - all pairs shortest paths, and may be faster
+                  than Floyd–Warshall on sparse graphs.
+    - Viterbi - shortest stochastic path problem with an additional 
+                probabilistic weight on each node.
+    - etc.
+
+==================================
+Combinatorial search algorithms  - achieve efficiency by 
+  reducing the effective size of the search space 
+  or by employing heuristics. 
+
+  Classic combinatorial search problems include solving 
+  the eight queens puzzle or evaluating moves in games 
+  with a large game tree, such as reversi or chess.
+
+==================================

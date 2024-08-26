@@ -1,0 +1,134 @@
+Short 12-questions screening for Data Science.
+
+===================================================================
+1. On a UNIX/Linux system, which command might you use to list
+the last few entries in a log file?
+
+1.  No Answer
+2.  sudo
+3.  ls
+4.  tail  <---- correct
+5.  cron
+
+===================================================================
+2. What is the runtime complexity for a sequential search on an unsorted array?
+
+1.  No Answer
+2.  Big-O (2 to the Nth power)
+3.  Big-O (n) <---- correct
+4.  Big-O (n log n)
+5.  Big-O (log n)
+6.  Big-O (n squared)
+7.  Big-O (1)
+
+===================================================================
+3. Out of the list, what are the problem (or problems) of KNN (K Nearest Neighbors)
+
+1.  No Answer
+2.  No problems with KNN
+3.  It takes a lot of time to train
+4.  It takes a lot of time to train and predict
+5.  It takes a long time to predict  <---- correct
+6.  It only works for linear problems
+
+===================================================================
+4. Which algorithms are ensemble classifiers?
+
+1.  No Answer
+2.  Random Forest and XG-Boost  <---- correct
+3.  XG-Boost  <---- correct
+4.  Random Forest and Naive Bayes
+5.  SVM
+6.  SVM and Naive
+7.  Bayes Naive Bayes
+8.  XG-Boost and SVM
+9.  Random Forest <---- correct
+
+===================================================================
+5. Which algorithm can be seen as a Neural Network?
+
+1.  No Answer
+2.  Decision Tree
+3.  Logic regression <---- correct
+4.  None
+5.  SVM
+
+===================================================================
+6. Which request method will allow you to see parameters as part of the URL string?
+
+1.  No Answer
+2.  POST
+3.  GET  <---- correct
+4.  ACTION
+5.  PUT
+
+===================================================================
+7. To find out what tables are available in a database (such as MySQL), which command should be used?
+
+1.  No Answer
+2.  TABLES
+3.  LIST TABLES
+4.  LT
+5.  SHOW TABLES <---- correct
+
+===================================================================
+8. Out of the following list, which ones are good metrics to classify on an imbalanced dataset?
+Note: C-AUC = area under the curve.
+
+1.  No Answer
+2.  f-1 score and AUC
+3.  Accuracy
+4.  RMSE and AUC
+5.  precision-recall <---- correct
+6.  AUC
+7.  RMSE
+8.  f-1 score
+
+===================================================================
+9. K-Means is an example of
+
+1.  No Answer
+2.  Semi-supervised learning
+3.  Supervised learning
+4.  Unsupervised Learning  <---- correct
+5.  Reinforcement learning
+
+===================================================================
+10. You are supporting an event ticket ordering system. 
+It's paramount that requests are handled precisely in the order 
+they were received so that tickets are sold on a first-come, 
+first-serve basis. What data structure should you use to keep 
+track of incoming requests?
+
+1.  No Answer
+2.  queue  <---- correct
+3.  binary tree
+4.  stack
+5.  hashmap
+
+===================================================================
+11. How to save pandas DataFrame to CSV file
+
+1.  No Answer
+2.  pd.to_csv(df, file_name)
+3.  df.to_csv(file_name) <---- correct
+4.  df.save(file_name)
+
+===================================================================
+12. What is the difference between
+    table1 INNER JOIN. table2 on ...
+and
+    table1 LEFT OUTER JOIN. table2
+
+Select all correct answers:
+
+1.  No Answer
+2.  INNER JOIN will return only common rows (where matching IDs exist on both sides) <---- correct
+3.  LEFT OUTER JOIN will return all rows from table1 <---- correct
+4.  LEFT OUTER JOIN will return all rows from table2
+5.  LEFT OUTER JOIN will fill missing values in table1 with nulls
+6.  LEFT OUTER JOIN will fill missing values in table2 with nulls <---- correct
+
+===================================================================
+
+

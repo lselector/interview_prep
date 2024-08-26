@@ -1,0 +1,620 @@
+# ---------------------------------------------------------
+Distributed System Design
+  Big systems to serve Billions of users must have
+  distributed architecture.
+  Scale (increase number of servers, databases, etc.)
+  Partitioning (sharding, etc.)
+  Load balancing
+  Consistency (all servers should return same data to same request)
+  Reliability, geographical redundancy
+  (avoid SPoF = Single Point of Failure)
+  Message queues
+  Consistent Hashing
+  Caching
+  Scaling Performance
+  Security, authentication, tokens, ...
+  etc.
+# ---------------------------------------------------------
+Some good sources of information:
+  book: Designing Data-Intensive Applications - by Martin Kleppmann
+  youtube: Gaurav Sen
+  https://www.educative.io/ - course "Grokking the System Design Interview"
+# ---------------------------------------------------------
+Scalability: horizontal (more computers)
+          vs vertical (few huge computers)
+Microservice vs monolithic architecture
+scalability
+  decoupled parts - easier design, just agree on APIs
+    easier training
+    different IT/bus groups,
+    different deployment schedules,
+    different technologies
+    different tools, expertise,
+    separate Git repositories,
+    separate testing, etc.
+    more stable (no single point of failure)
+But:
+  needs more people
+  more parts - more complexity, more inefficiencies
+  can't perform as fast as monolith (network delays)
+# ---------------------------------------------------------
+request/response chaining - possible chaining of timeouts
+                          - possible inconsistencies
+Publish / Subscribe (Publisher / Subscriber) model
+     we add message broker between publish/subscribe nodes
+     (Kafka, RabbitMQ, etc.) to decouple them
+
+Event-Driven  (on each step use log of events)
+Push vs Pull
+# ---------------------------------------------------------
+Distributed data sync and distributed transactions
+Main idea - have at least 3 servers to get consesnsus of at least 2.
+We need two thirds.
+If M servers fail, we need (2M+1) working servers to "vote".
+# ---------------------------------------------------------
+Big distributed systems consists of hundreds and thousands
+of servers, systems, processes. It will fail often unless
+we take measures. How often?
+Suppose our system consists of N pieces,
+each has on average 1 failure in 100 days.
+
+The probabiltiy of survival for 1 element for 1 day is:
+  p=0.99
+The probabiltiy of survival for N elements for D days is:
+  P(N,D) = (p**N)**D = p**(D*N)
+  For a week (D=7):
+  N=30   : 0.99**210  = 0.12
+  N=300  : 0.99**2100 = 0.0000000007
+So the probabiltiy of survival is very small.
+The system will be failing all the time.
+Just imagine if you have thousands of servers / processes.
+# ---------------------------------------------------------
+Similar logic can be applied to the complexity of a system.
+Complexity defines the cost and time of development,
+and cost and quality of maintenance.
+
+Suppose a system consist of 100 interacting parts, 
+and we increase complexities of each part by 10%.
+
+If overall complexity is a product of individual ones,
+then it will increase tremendously:
+
+   1.1 ** 100 = 13,781
+
+In other words, just a small increase in complexity of
+each element may tremendously increase the overall 
+costs and efforts - and the project may fail because of that.
+# ---------------------------------------------------------
+Fault Tolerance - achieved through redundancy and reliable
+  multitasking protocols.
+# ---------------------------------------------------------
+Redundancy:
+  - informaion redundancy (Hamming codes): add extra bits
+     to do error checking/recovery
+  - time redundancy - retry several times
+  - physical redundancy - add duplicate hardware / software
+    Quorum-based decisions (flat group of servers, majority voting)
+    We need more than 2/3 majority. If there are M faulty processes,
+    we need (2M+1) working ones to reach the agreement.
+# ---------------------------------------------------------
+Two-phase commit (2PC) protocol (1978) - use coordinator:
+     Coordinator --- query to commit   --> Participants
+                 <-- votes yes/no      ---
+                 --- commit / rollback -->
+                 <-- acknowledgment    --- commit*/abort*
+     end
+
+Problem with 2PC - possible deadlock if for example both
+  the coordinator and one of participants fail
+# ---------------------------------------------------------
+Three-pase commit (3PC) protocol (Skeen, 1982)
+  adds "Prepared to commit" state.
+  If the coordinator fails before sending preCommit messages,
+  the cohort will unanimously agree that the operation was aborted.
+  The coordinator will not send out a doCommit message
+  until all cohort members have ACKed that they are Prepared to commit.
+
+Problem with 3PC: if failures cascade, and the quorum
+    in the system is lost, a quorum can later become connected
+    and still remain blocked.
+# ---------------------------------------------------------
+Enhanced Three Phase Commit (E3PC, 1998),
+   - http://people.csail.mit.edu/idish/ftp/JCSS.pdf
+  that always allows a quorum to make progress.
+  A connected quorum never blocks.
+  E3PC is based on the quorum-based 3PC, and it does not
+  require more time or communication than 3PC.
+# ---------------------------------------------------------
+Recovery strategies (in case of failure):
+  - backward recovery to the last valid checkpoint (retry)
+  - forward recovery - bring the system to correct state
+      (by using correction codes, quorum, etc.)
+# ---------------------------------------------------------
+MVCC (Multiple Value Concurrency Control):
+  Concurrently have several values:
+    previous values from which reading is happening
+    new values eing written
+  Periodocally clean out old values
+Saga Pattern - example "trip saga": reserve hotel, car, plane ticket
+  Do it in this order.
+  If something fail - retry
+  If giveup - roll back reservations which were already made.
+# ---------------------------------------------------------
+MQTT Protocol (Telemetry, FB Messenger)
+SMPP Protocol (SMS)
+Gateway, authentication, token
+# ---------------------------------------------------------
+Files vs blobs (dinamodb or cassandra)
+# ---------------------------------------------------------
+Sessions service - connections
+# ---------------------------------------------------------
+Tinder - Matcher service user2user table
+Tinder - Recommendation / ranking service - by several parameters with weights
+# ---------------------------------------------------------
+Distributed Caching
+Consistent hashing - a distributed hashing scheme
+  that operates independently of the number of servers or
+  objects in a distributed hash table by assigning them
+  a position on an abstract circle, or hash ring.
+  This allows servers and objects to scale without
+  affecting the overall system.
+# ---------------------------------------------------------
+Master/slave
+Sharding - horizontal partitioning
+Sharding by location and gender
+# ---------------------------------------------------------
+Remove single points of failure
+# ---------------------------------------------------------
+Load balancer and how to avoid SPoF (single point of failure):
+def: A load balancer is "a device that acts as a reverse proxy
+     and distributes network or application traffic
+     across a number of servers. Load balancers are used
+     to increase capacity and reliability of applications."
+  Hardware or Software Load Balancing
+  NGINX (and NGINX Plus) - software Load Balancer used
+    by more than 400 million websites (including Netflix, Dropbox, etc.)
+  DNS multiple A records - guarantees round-robin
+    (but doesn't check health of destinations)
+    -> multiple load-balancing gateways
+       -> regions -> internal servers
+  DoS (Denial of Service attack)
+  DNS routing (round-robin)
+  stateful (same IP client directed to same server for session/cache percsistence)
+  https goes through? or (https outer, http inner) ?
+  reverse-proxy - unwraps https request, communicates with internal services
+# ---------------------------------------------------------
+Avoid SPF (Single Point of Failure)
+  - redundancy (multiple servers, master/slave, replication)
+    geographical redundancy (systems in different countries, states, etc.)
+  - load balancer - DNS (redundant) - points to multiple
+    IP addresses (multiple LoadBalancing servers)
+# ---------------------------------------------------------
+CAP Theorem - a distributed DB can have no more
+              than 2 of 3 these three qualities:
+              CAP = Consistency, Availability, Partition Tolerance
+CA (Consistency  + Availability)        : RDBMS
+CP (Consistency  + Partition Tolerance) : Big Table, HBase, MongoDB, Redis
+AP (Availability + Partition Tolerance) : Dynamo, Voldemort, CouchDB, Cassandra
+# ---------------------------------------------------------
+80% of data is unstructured
+  NoSQL DBs
+    # -------------------------------------------
+    Cassandra - Facebook, open source since 2008, Apache,
+                designed as distributed system
+                (performance scales linearly with nodes)
+                (multi-datacenter, multi-nodes, redundancy,
+                 replication, recovery)
+                Can do map-reduce on top of Hadoop, Pig, Hive.
+                Cassandra is a hybrid between key-value and a tabular DB.
+                It uses wide columns, like big-table and Dynamo DBs
+                has keys - and values, where values may be
+                ordered collections of rows
+                Java, CQL (Cassandra Query Language),
+                fast, very reduntant (replication) & scalable
+                Can not do joins or subqueries.
+    # ----------CQL = Cassandra Query Language ------------
+            CREATE KEYSPACE MyKeySpace
+              WITH REPLICATION = { 'class' : 'SimpleStrategy',
+                                   'replication_factor' : 3 };
+            USE MyKeySpace;
+            CREATE COLUMNFAMILY MyColumns (
+                id text,
+                Last text,
+                First text,
+                PRIMARY KEY(id)
+            );
+            INSERT INTO MyColumns (id, Last, First) VALUES ('1', 'Doe', 'John');
+            SELECT * FROM MyColumns;
+    # -------------------------------------------
+            pip install cql
+            brew install cassandra
+            cd /usr/local/Cellar/cassandra/3.11
+            ./cassandra
+            cqlsh - cmd utility
+            cqlsh localhost
+            ps -ef | grep cassandra
+    MongoDB - documents, JSON, documents, no schema
+              C++ , dynamic object-based language, javascript
+    HBase - Key-Value store modeled after Google's BigTable, 
+            runs on top of HDFS (Hadoop Distributed File System)
+            partitioned into tables, tables into column families,
+            Java, map-reduce
+    Hive - for of-line batch map/reduce jobs
+    Hadoop DFS
+  key-value store (amazon S3)
+  column-based store (Cassandra, HBase)
+  document-based store (MongoDB, CouchDB)
+  Graph-based DB (Neo4J)
+# ---------------------------------------------------------
+Wide column stores (a.k.a. extensible record stores) 
+store data in records with an ability to hold very large 
+numbers of dynamic columns (billions). 
+Since the column names as well as the record keys are not fixed, 
+wide column stores can be seen as two-dimensional key-value stores.
+
+Google's BigTable is considered to be the origin of this class of databases.
+Classical work: 
+"Bigtable: A Distributed Storage System for Structured Data" (2006) by Fay Chang et al 
+  -  http://static.googleusercontent.com/media/research.google.com/en//archive/bigtable-osdi06.pdf 
+
+Popular examples of WCS databases:
+ - Cassandra (WCS based on ideas of BigTable and DynamoDB)
+ - HBase (WCS on top of Hadoop, based on BigTable)
+ - Microsoft Azure Cosmos DB (Document store , Graph DBMS, Key-value store, WCS)
+# ---------------------------------------------------------
+Sorted Strings Table (borrowed from google) is a file of 
+key/value string pairs, sorted by keys.
+
+LSM Trees - Log Structured Merge Trees - in Cassandra
+
+Persistent Segment Tree  updates handled similar to how it 
+is done in version control systems. To avoid extra time 
+and space we only create nodes that have been modified, 
+and share rest of the tree from the previous version of the tree.
+   - https://iq.opengenus.org/persistent-segment-tree/
+# ---------------------------------------------------------
+RocksDB - fast key-value store. 
+    It is a fork of LevelDB by Google optimized for speed:
+        (use multiple CPUs, use SSDs)
+    Note: In 2018 Facebook switched storage for messages from HBase to RocksDB
+          as a MySQL storage engine.
+    Note: RocksDB is based on a log-structured merge-tree (LSM tree) data structure.
+    - https://en.wikipedia.org/wiki/RocksDB
+# ---------------------------------------------------------
+stackoverlow architecture:
+   SQL Server 2019
+   C#
+   ASP.Net Core
+   redundancy
+   front end CDN, DNS and load balancing
+   backend - Elastic Search and Redis caching
+# ---------------------------------------------------------
+CDN = Content Delivery/Distribution Network
+      local cache (usually for images and videos)
+# ---------------------------------------------------------
+   http://highscalability.com
+   https://www.hiredintech.com/courses/system-design
+# ---------------------------------------------------------
+Apache ZooKeeper - a centralized service for maintaining
+  configuration information, naming, providing distributed
+  synchronization, and providing group services.
+# ---------------------------------------------------------
+ETL:  batch, micro-batch, continous flow
+
+Stream processing:
+  Kafka Streams
+  Apache Spark Streaming (micro-batches)
+  NiFi
+  Apache Flink (continous flow)
+  Google DataFlow - https://cloud.google.com/dataflow - serveless
+  Apache Beam
+# ---------------------------------------------------------
+Messenger service like WhatsApp or WeChat
+  basic features:
+    on mobile
+    one-to-one text messages
+    confirmations: sent, delivered, red
+    alerts when message comes in (push notifications)
+    info about user (last seen, profile info)
+    extra features:
+       send images, videos, audio messages
+       calling (audio, video)
+       group chat, call, video conference
+       monetization (stickers, emojies, user limits, groups, ...)
+       multiple languages
+    features:
+       scaling
+       caching
+       store logs of messages + backups (on client and on server)
+
+    Bob <--> LBG .. B_MQ  ....  A_MQ .. LB  <--> Alice
+
+LBG = Load Balancing Gateway (may break order of messages)
+MQ = message queue
+
+To scale:
+  asynchronous
+  store recent messages in queue (until delivered or longer?)
+  messages = content, confirmations
+  push notifications (on client) - using Google cloud notifications platform
+
+
+transport protocol - websockets ?  (not http)
+Apache Thrift - Interface definition and binary communication protocol
+                for creating services (used by FB internally)
+                formats: binary, HTTP-friendly, and compact binary
+                 https://en.wikipedia.org/wiki/Apache_Thrift
+
+parser/unparser microservice
+session service - stores and provides which client connected to which server
+last-seen-microservice (key/value - user/last timestamp)
+
+group servie - returns user ids of members (whatsapp - up to 200 members)
+               group_id to user_id
+retry - implemented using message-queue
+
+# ---------------------------------------------------------
+
+service discovery
+
+# ---------------------------------------------------------
+Cache Invalidation
+  How to avoid cache inconsistency? (when data in cache != data in DB)
+  Write-through cache: transaction = (write into cache + write into DB)
+  Write-around cache: write-DB, then fill cache from DB
+  Write-back cache: write-cache, then later do backup to DB
+
+Cache eviction policies
+  - FIFO (First in First Out)
+  - LIFO (Last In First Out)
+  - LRU  (Least Recently Used)
+  - MRU  (Most Recently Used)
+  - LFU  (Least Frequently Used)
+  - RR   (Random Replacement)
+# ---------------------------------------------------------
+Which databases does Facebook use?
+   https://www.gangboard.com/blog/what-database-does-facebook-use
+   - MYSQL - primary DB for all structured data
+   - HBase - for messaging. Data organized into regional servers.
+       HBase list, WAL (Write-Ahead Log) = HLog - stored in in-memory MemStore.
+   - Cassandra - extensibility and availability, inbox search, etc.
+   - Haystack - universal object store, used to store and serve photos
+                15 Bln photos * 4 formats = 60 B photos
+   - Memcached - in-memory key-value store, multiple clusters,
+
+
+
+FB Data Warehouse (2014 - scaling to 300 PB):
+   https://engineering.fb.com/core-data/scaling-the-facebook-data-warehouse-to-300-pb/
+   Hive, RCFile (Record-Columnar File Format)
+   Originally FB ORCFile writer used sorted dictionaries in red-black trees.
+   Later for performance change the format to not-sorted
+   compressed memory-efficient hashing.
+
+# ---------------------------------------------------------
+Facebook open-sourced their DLRM in July, 2019:
+  Deep Learning Recommendation Model for Personalization and Recommendation Systems
+   - https://github.com/facebookresearch/dlrm
+  The model input consists of dense and sparse features.
+  dense - a vector of floating point values.
+  sparse - a list of sparse indices into embedding tables,
+    which consist of vectors of floating point values.
+  DLRM uses custom PyTorch implementation to have both
+    model and data parallelism for efficiency.
+
+# ---------------------------------------------------------
+Facebook application-specific hardware for ML
+ - https://engineering.fb.com/data-center-engineering/accelerating-infrastructure/
+
+FBLearner - main AI platform - released to Open Compute Project (OCP)
+ - feature store
+ - training workflow management
+ - inference engine
+
+3.5 B images to train AI models
+
+Zion = new hardware platform for training
+       (large-memory unified - CNN, LSTM, and SparseNN)
+       8-socket server, 8-accelerator platform, OCP accelerator module
+       Zion decouples memory, compute, and network intensive components
+       The system has two high-speed fabrics:
+         a coherent fabric that connects all CPUs,
+         and a fabric that connects all accelerators.
+       Since accelerators have high memory bandwidth, but low memory capacity,
+       we want to effectively use the available aggregate memory capacity
+       by partitioning the model in such a way that the data that is
+       accessed more frequently resides on the accelerators,
+       while data accessed less frequently resides on DDR memory with the CPUs.
+
+Kings Canyon = custom chips for AI inference
+    ASICs do not run general-purpose code.
+    Hence they require a specialized compiler to translate the graph
+    to instructions that execute on these accelerators.
+    The objective of the Glow compiler is to abstract the vendor-specific
+    hardware from the higher-level software stack to allow our
+    infrastructure to be vendor agnostic. It accepts a computation graph
+    from frameworks such as PyTorch 1.0 and generates highly optimized
+    code for these ML accelerators.
+Mount Shasta = custom chips for video transcoding (live videos, ...)
+OAM - new vendor-agnostic OCP accelerator module (OAM)
+# ---------------------------------------------------------
+Facebook - number of servers:
+  2008 -  10K
+  2009 -  30K
+  2010 -  60K
+  2018 - 200K (estimated)
+# ---------------------------------------------------------
+Data Partitioning - break up a big DB into many smaller parts
+   a. Horizontal partitioning (range-based, sharding)
+   b. Vertical partitioning - by kind.
+      DB1 - user data
+      DB2 - friends lists
+      DB2 - photos
+      etc.
+   c. Directory Based Partitioning - use a "directory" server
+      to map data types to DBs.
+
+Partitioning criteria:
+   a. Key or Hash-based partitioning
+   b. List partitioning
+   c. Round-robin partitioning
+   d. Composite partitioning
+
+Common Problems of Data Partitioning:
+   a. Joins and Denormalization
+   b. Referential integrity (foreign keys)
+   c. Rebalancing
+# ---------------------------------------------------------
+Database Indexes
+Databases can be optimized for OLTP (On-Line Transactional Processing)
+or OLAP (On-Line Analytical Processing) for analytics.
+
+Nowadays OLAP DBs use columnar indexes,
+  massive parallelism, taking advantage of large memory and GPU.
+
+Columnar Indexes - standard/default nowadays.
+  Here is a short video (4 min) made long time ago (in 2011)
+  showing performance advantage of columnar store indexes
+  in Microsoft SQL server.
+   - https://www.youtube.com/watch?v=vPN8_PCsJm4
+  The video demonstrates that columnar indexing is
+  at least 40 times faster than traditional index.
+
+Here are more links about Inverted indexes:
+ - https://www.quora.com/In-database-design-what-exactly-is-the-difference-between-inverted-index-and-a-normal-index
+ - https://stackoverflow.com/questions/47537318/b-tree-index-vs-inverted-index
+ - https://en.wikipedia.org/wiki/Inverted_index
+
+# ---------------------------------------------------------
+A proxy server is an intermediate server between the client and the server.
+Proxies used to:
+  filter requests
+  log requests
+  transform requests - adding/removing headers,
+                       encrypting/decrypting, or compressing a resource
+  cache and serve
+
+Proxy types:
+  Anonymous, Trnsprent, Reverse
+# ---------------------------------------------------------
+Redundancy and Replication
+   Primary Server - failover -> secondary server
+   Active Data - Data Replication -> Mirrored Data
+# ---------------------------------------------------------
+NoSQL DBs:
+  Key-Value Stores: Redis, Voldemort, Dynamo, etc.
+  Document Databases: data is stored in documents, and these
+    documents are grouped together in collections.
+    Examples: CouchDB and MongoDB
+  Wide-Column Databases: column families (tables).
+    Rows may have different number of fields (columns).
+    Columnar databases are best suited for analyzing large datasets.
+    Examples - Cassandra and HBase.
+  Graph Databases: Data is saved in graph structures
+    (nodes, properties, connections).
+    Examples: Neo4J and InfiniteGraph.
+
+Most of the NoSQL DBs sacrifice ACID compliance for performance and scalability.
+  (ACID = Atomicity, Consistency, Isolation, Durability)
+
+# ---------------------------------------------------------
+browser / Web Server communication protocols:
+   standard HTTP web request
+   AJAX poling (http request every ~0.5 sec)
+   Long-Polling (hanging GET with a timeout)
+   WebSockets (full-duplex bi-directional communication)
+   Server-Sent Events - persistent long-term connection to receive data from server.
+# ---------------------------------------------------------
+health service (monitoring, loging, alerts)
+# ---------------------------------------------------------
+Secure Hash Algorithms:
+  https://en.wikipedia.org/wiki/Secure_Hash_Algorithms
+  MD5 (Message Digest, 1992):
+      128-bit (16 bytes) hash from arbitrary-length text
+      Typically presented as a sequence of 32 hexadecimal digits.
+        MD5("") =
+         0x d41d8cd98f00b204e9800998ecf8427e
+  SHA1 (Secure Hash Algorithm, NSA, 1995):
+      160-bit hash, improved MD5
+  SHA2 = SHA256 (2004-2012):
+      256-bit hash from short (<= 264 bit) message
+      used in digital certificate and in data integrity
+        SHA256("")
+          0x e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855
+        SHA512("")
+          0x cf83e1357eefb8bdf1542850d66d8007d620e4050b5715dc83f4a921d36ce9ce
+             47d0d13c5d85f2b0ff8318d2877eec2f63b931bd47417a81a538327af927da3e
+  SHA3 (2015) - also 256 bit
+
+# ---------------------------------------------------------
+etcd - ( https://etcd.io ) - open source distributed key-value store.
+   It is used by Kubernetes to hold configuration, state, etc.
+# ---------------------------------------------------------
+Leader election, concensus algorithm
+# ---------------------------------------------------------
+Denial of Servie Attack
+Cascading Failure prevention:
+ - add resources (in advance, or as needed (auto-scale)
+ - limit rate on input, use queues
+ - throttle big events/jobs/emails into a series of batches
+ - decrease number of queries for non-essential data, use approximations
+ - use cache when possible
+# ---------------------------------------------------------
+GraphQL.org - open-source data query and manipulation language for APIs
+              and a runtime for fulfilling queries with existing data.
+          2012 - Facebook development
+          2015 - public release
+          2018 - moved to GraphQL Foundation
+# ---------------------------------------------------------
+gRPC (gRPC Remote Procedure Calls) - open source, from Google (2015)
+     Uses HTTP/2 for transport, Protocol Buffers, authentication,
+     bidirectional streaming and flow control, blocking or nonblocking bindings,
+     cancellation and timeouts.
+# ---------------------------------------------------------
+Federated Identity - linking a person's electronic identity and attributes
+    stored across multiple distinct identity management systems.
+SSO (Single Sign-On) - a subset of FI management.
+# ---------------------------------------------------------
+Kubeflow - open source Machine Learning platform from Google
+  for deploying ML worlflows on Kubernetes
+# ---------------------------------------------------------
+TEE  - Trusted Execution Environment - provides security features
+  such as isolated execution, integrity of applications, confidentiality of their assets
+# ---------------------------------------------------------
+Facebook TAO (The Associations and Objects) (2013)
+  TAO is easy to use and powerful distributed data store.
+  - https://www.facebook.com/notes/facebook-engineering/tao-the-power-of-the-graph/10151525983993920/
+
+# ---------------------------------------------------------
+BST - Binary Search Tree
+# ---------------------------------------------------------
+B Tree - B-tree is a self-balancing tree data structure
+         that maintains sorted data and allows searches,
+         sequential access, insertions, and deletions in logarithmic time.
+         The B-tree generalizes the binary search tree, allowing
+         for nodes with more than two children.
+
+         def (Knuth) B-tree of order m:
+          - Every node has at most m children.
+          - Every non-leaf node (except root) has at least m/2 children.
+          - The root has at least two children if it is not a leaf node.
+          - A non-leaf node with k children contains k  1 keys.
+          - All leaves appear in the same level and carry no information.
+# ---------------------------------------------------------
+B+ Tree - like B Tree, but large number of children per node,
+          also additional level is added at the bottom with linked leaves,
+          also the linked list allows rapid in-order traversal.
+# ---------------------------------------------------------
+base64 - binary-to-text encoding.
+  6 bits can represent 64 numbers 0..63.
+  We map these numbers chars: A..Za..z0..9+/, and use "=" for padding
+  3 bytes of binary data = 24bits = 4*6 = 4 chars in base64 encoding
+# ---------------------------------------------------------
+URL encoding:
+  "Unreserved Characters(66)" - don't need encoding:
+    A..Za..z0..9-_.~
+  "Reserved characters (18)" - have special meaning if not encoded:
+    !*'();:@&=+$,/?#[]
+  percent-encoding of any byte:  "%" followed by hexadecimal code
+    for example, %41 == "A"
+# ---------------------------------------------------------

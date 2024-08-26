@@ -1,0 +1,40 @@
+
+https://tinyurl.com/   (service since 2002)
+
+TinyURL offers an API which allows applications 
+to automatically create short URLs. 
+This is done by simply reading the result returned 
+from tinyurl.com/api-create.php?url=URLENCODED_SOURCE_URL.
+
+Convert:
+  http://levselector.com
+into
+  https://tinyurl.com/y74lpq94
+or into custom alias:
+  http://tinyurl.com/KindleWireless
+
+There are 100+ similar services, for example:
+  bit.ly, goo.gl, qlink.me, etc.
+
+With time the length of random unique key grows.
+(tinyurl grew from 6 to 8)
+
+API:
+  URL --> tiny_url     (generate and store tiny_url)
+  tiny_URL -> redirect to real URL
+
+Architecture:
+  load balancer, 
+  workers to generate tiny_url
+  service to provide range counters to workers
+  save URL into database
+  clone database around the globe for fast access (CDN idea)
+      (create URL may be slow, but using it should be very fast)
+  cache for database
+
+26 small + 26 capital + 10 = 62 characters' alphabet
+
+length:
+  62**7 =      3,521,614,606,208
+  62**8 =    218,340,105,584,896
+  62**9 = 13,537,086,546,263,552

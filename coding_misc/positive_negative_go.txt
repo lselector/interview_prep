@@ -1,0 +1,101 @@
+﻿//    Given an array of integers, calculate the fractions of its 
+//    elements that are positive, negative, and are zeros. 
+//    Print the decimal value of each fraction on a new line.
+//    Sample input: length of array, elements of array
+//    
+//    6
+//    -4 3 -9 0 4 1
+//    
+//    Sample output:
+//    0.500000
+//    0.333333
+//    0.166667
+
+
+
+
+package main
+
+
+import (
+    "bufio"
+    "fmt"
+    "io"
+    "os"
+    "strconv"
+    "strings"
+)
+
+
+/*
+ * Complete the plusMinus() function below.
+ */
+func plusMinus(arr []int32) {
+    n := len(arr)
+    n_p := 0
+    n_n := 0
+    n_z := 0
+    for _, elem := range arr {
+        switch {
+        case elem > 0:
+            n_p++
+        case elem < 0:
+            n_n++
+        default:
+            n_z++
+        }
+    }
+    if n <= 0 {
+        n = 1
+    }
+    
+    fmt.Printf("%.6f\n", float64(n_p)/float64(n))
+    fmt.Printf("%.6f\n", float64(n_n)/float64(n))
+    fmt.Printf("%.6f\n", float64(n_z)/float64(n))
+    
+}
+
+
+func main() {
+    reader := bufio.NewReaderSize(os.Stdin, 1024 * 1024)
+
+
+    nTemp, err := strconv.ParseInt(readLine(reader), 10, 64)
+    checkError(err)
+    n := int32(nTemp)
+
+
+    arrTemp := strings.Split(readLine(reader), " ")
+
+
+    var arr []int32
+
+
+    for arrItr := 0; arrItr < int(n); arrItr++ {
+        arrItemTemp, err := strconv.ParseInt(arrTemp[arrItr], 10, 64)
+        checkError(err)
+        arrItem := int32(arrItemTemp)
+        arr = append(arr, arrItem)
+    }
+
+
+    plusMinus(arr)
+}
+
+
+func readLine(reader *bufio.Reader) string {
+    str, _, err := reader.ReadLine()
+    if err == io.EOF {
+        return ""
+    }
+
+
+    return strings.TrimRight(string(str), "\r\n")
+}
+
+
+func checkError(err error) {
+    if err != nil {
+        panic(err)
+    }
+}

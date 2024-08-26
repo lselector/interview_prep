@@ -1,0 +1,59 @@
+#! python3
+
+"""
+# tax_brakets.py
+# We have incremental income tax-brackets:
+# Calculate total tax for a given income
+"""
+
+import os, sys, math
+
+tax_brakets = [
+    [10,   0.1],
+    [20,   0.2],
+    [10,   0.3],
+    [None, 0.4]
+    ]
+
+# ----------------------------------------------------
+def calc_tax(income, tax_brakets):
+    tax = 0.0
+    mylist = []
+    level1 = 0
+    for incr, tax_rate in tax_brakets:
+        if incr == None:
+            level2 = math.inf
+        else:
+            level2 = level1 + incr
+        tax_add = 0.0
+        if (income >level2):
+            tax_add = tax_rate*(level2-level1)
+        elif income >=level1:
+            tax_add = tax_rate*(income-level1)
+        mylist += [tax_add]
+        tax += tax_add
+        level1 = level2
+
+    return tax, mylist
+
+# ----------------------------------------------------
+# test the procedure
+
+incomes = [0,1,9,10,15,30,35,40,45]
+
+for income in incomes:
+    tax,mylist = calc_tax(income, tax_brakets)
+    print(f"income={income:5}, tax={tax:5}, details={mylist}")
+
+# output
+"""
+income=    0, tax=  0.0, details=[0.0, 0.0, 0.0, 0.0]
+income=    1, tax=  0.1, details=[0.1, 0.0, 0.0, 0.0]
+income=    9, tax=  0.9, details=[0.9, 0.0, 0.0, 0.0]
+income=   10, tax=  1.0, details=[1.0, 0.0, 0.0, 0.0]
+income=   15, tax=  2.0, details=[1.0, 1.0, 0.0, 0.0]
+income=   30, tax=  5.0, details=[1.0, 4.0, 0.0, 0.0]
+income=   35, tax=  6.5, details=[1.0, 4.0, 1.5, 0.0]
+income=   40, tax=  8.0, details=[1.0, 4.0, 3.0, 0.0]
+income=   45, tax= 10.0, details=[1.0, 4.0, 3.0, 2.0]
+"""

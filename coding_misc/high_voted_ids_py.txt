@@ -1,0 +1,72 @@
+﻿#! python3
+
+# --------------------------------------------------------------
+#    Given a list of tuples consisting of an id and a
+#    timestamp, as well as a given timestamp, return the id
+#    with the highest vote for all votes that occurred
+#    before the given timestamp.
+#    
+#    Follow up: return the k ids with the highest votes
+#    before the given timestamp
+# --------------------------------------------------------------
+
+import sys, os, time
+
+# --------------------------------------------------------------
+def create_data():
+    """
+    # returns 2 values:
+    #   a list of tuples (id, timestamp)
+    #   one timestamp in the middle
+    """
+    mylist = [
+      (1, 20),
+      (2, 24),
+      (1, 25),
+      (2, 21),
+      (3, 22),
+      (1, 23),
+      (1, 26),
+      (1, 30),
+      (1, 33),
+      (2, 34),
+      (1, 35),
+      (2, 31),
+      (3, 32),
+      (1, 36),
+    ]
+    return (mylist, 25.5)
+
+
+# --------------------------------------------------------------
+def top_inject(myid, vv, top_list, mylength):
+    top_list.append((myid,vv))
+    top_list.sort(key=lambda x:x[1])
+    top_list.reverse()
+    return top_list[:mylength]
+
+
+# --------------------------------------------------------------
+def main() :
+    """ main logic is here """
+    mylist, time0 = create_data()
+    mylength = 2
+    hh={}
+    top_list = []
+    for myid, myts in mylist:
+        if myts >= time0:
+            continue
+        print(myid,myts)
+        if myid not in hh:
+            hh[myid] = 0
+        hh[myid] += 1
+        top_list = top_inject(myid, hh[myid], top_list, mylength)
+
+
+    print("-"*40)
+    for myid, vv in top_list:
+        print(myid, vv)
+
+
+if __name__ == "__main__":
+    main()

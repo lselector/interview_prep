@@ -1,0 +1,43 @@
+
+design a round buffer to keep ip addresses
+with 3 methods:
+    next_ip()
+    add_ip(ip)
+    del_ip(ip)
+
+Requirement - all 3 methods should have time complexity O(1)
+
+Approach - use two data structures:
+
+mylist = [] # list of unique IP addresses
+mydict = {} # dictionary with elements (ip:idx), where idx is position of ip in the list
+myidx  = 0  # last position in the list
+
+# -------------------------------------
+def next_ip():
+    myidx += 1
+    idx_max = len(mylist)-1
+    if myidx > idx_max:
+        myidx = 0
+    return mylist[myidx]
+
+# -------------------------------------
+def add_ip(ip):
+    if ip in mydict:
+        return 1
+    mylist += [ip]
+    mydict[ip] =  len(mylist)-1
+    return 0
+
+# -------------------------------------
+def remove_ip(ip):
+    if ip not in mydict:
+        return 1
+    idx = mydict[ip]
+    idx_max = len(mylist)-1
+    ip2 = mylist.pop()
+    del mydict[ip]
+    if idx != idx_max:
+       mylist[idx] = ip2
+       mydict[ip2] = idx
+    return 0

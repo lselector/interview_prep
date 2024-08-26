@@ -1,0 +1,135 @@
+﻿Here are 10 simple screening questions 
+for Google Cloud and Machine Learning.
+(answers at the end).
+
+
+1
+On a UNIX/Linux system, which command might you
+use to list the last few entries in a log file?
+    No Answer
+    sudo
+    ls
+    tail
+    cron
+
+
+2
+What is the runtime for a sequential search on an
+unsorted array?
+    No Answer
+    Big-O (2 to the Nth power)
+    Big-O (n)
+    Big-O (n log n)
+    Big-O (log n)
+    Big-O (n squared)
+    Big-O (1)
+
+
+3
+Out of the list, what are the problem (or
+problems) of KNN (K Nearest Neighbors)
+    No Answer
+    No problems with KNN
+    It takes a lot of time to train
+    It takes a lot of time to train and predict It
+    takes a long time to predict
+    It only works for linear problems
+
+
+4
+Which algorithms are ensemble classifiers?
+    No Answer
+    Random Forest and XG-Boost
+    XG-Boost
+    Random Forest and Naive Bayes
+    SVM
+    SVM and Naive Bayes
+    Naive Bayes
+    XG-Boost and SVM
+    Random Forest
+
+
+5
+Which algorithm can be seen as a Neural Network?
+    No Answer
+    Decision Tree
+    Logic regression
+    None
+    SVM
+
+
+6
+Which request method will allow you to see
+parameters as part of the URL string?
+    No Answer
+    POST
+    GET
+    ACTION
+    PUT
+
+
+7
+
+
+To find out what tables are available in a
+database (such as MySQL), which command should be
+used?
+    No Answer
+    TABLES
+    LIST TABLES
+    LT
+    SHOW TABLES
+
+
+8
+Out of the following list, which ones are good
+metrics to classify on an imbalanced dataset?
+Note: C-AUC = area under the curve.
+No Answer
+    f-1 score and C-AUC
+    Accuracy
+    RMSE and C-AUC
+    C-AUC
+    f-1 score and accuracy
+    C-AUC and accuracy
+    RMSE
+    f-1 score
+
+
+9
+K-Means is an example of
+    No Answer
+    Semi-supervised learning
+    Supervised learning
+    Unsupervised Learning
+    Reinforcement learning
+
+
+10
+You are supporting an event ticket ordering
+system. It's paramount that requests are handled
+precisely in the order they were received so that
+tickets are sold on a first-come, first-serve
+basis. What data structure should you use to keep
+track of incoming requests?
+    No Answer
+    queue
+    binary tree
+    stack
+    hashmap
+
+
+===============================
+Answers:
+
+
+1: tail
+2: O(n)
+3: takes a long time to predict
+4: Random Forest and XG-Boost
+5: Logistic Regression
+6: GET 
+7: SHOW TABLES
+8: f-1 score and c-auc
+9: Unsupervised Learning
+10: Queue

@@ -1,0 +1,49 @@
+Books.
+There are multiple books.
+I have selected this one:
+  - Probability and Statistical Inference - by Robert Hogg, Elliot Tanis
+  - Probability and Statistical Inference: Instructors Solutions Manual
+
+  Latest edition is #10
+  But it is OK to previous editions (7..9)
+  There are many cheap copies on ebay
+  Also downloadable PDFs 
+
+===================================
+Google for 
+  statistics exercises with answers
+  statistics interview questions answers
+  interview data intuition
+
+https://stattrek.com/statistics/problems.aspx
+https://philschatz.com/statistics-book/
+http://pages.stat.wisc.edu/~wardrop/courses/pracexamques.pdf
+
+
+===================================
+GlassDoor Data Scientist Interview Questions
+  https://www.glassdoor.com/Interview/data-scientist-interview-questions-SRCH_KO0,14.htm
+
+1) How would you test if survey responses were filled at random
+by certain individuals, as opposed to truthful selections?
+
+2) You are compiling a report for user content uploaded every
+month and notice a spike in uploads in October. In particular, a
+spike in picture uploads. What might you think is the cause of
+this, and how would you test it?
+
+3) How would you build and test a metric to compare two user's
+ranked lists of movie/tv show preferences?
+
+4) How do you take millions of users with 100's of transactions
+each, amongst 10k's of products and group the users together in
+a meaningful segments?
+
+ ...
+
+===================================
+===================================
+===================================
+===================================
+===================================
+

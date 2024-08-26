@@ -1,0 +1,61 @@
+﻿#! python
+
+"""
+# Given two arrays (a,b) of integers
+# find (count) all integers "A" that satisfy the following:
+# 
+#   "A" divisible by all elements of array "a"
+#   All elements of "b" are divisible by "A"
+#
+# These numbers are referred to as being between the two arrays. 
+# You must determine how many such numbers exist.
+
+"""
+
+# -----------------------------------------------
+def counter1(a,b):
+    counter=0
+    for xx in range(max(a),min(b)+1):
+        for aa in a:
+            if xx % aa!=0:
+                break
+        else:
+            for bb in b:
+                if bb % xx!=0:
+                    break
+            else:
+                counter += 1
+    return counter
+
+# -----------------------------------------------
+def counter2(a,b):
+    counter=0
+    for xx in range(max(a),min(b)+1):
+        flag_a = True
+        flag_b = True
+        # -------------------
+        for aa in a:
+            if xx % aa!=0:
+                flag_a = False
+                break
+        if not flag_a:
+            continue
+        # -------------------
+        for bb in b:
+            if bb % xx!=0:
+                flag_b = False
+                break
+        if not flag_b:
+            continue
+        # -------------------
+        counter += 1
+
+    return counter
+
+# -----------------------------------------------
+if __name__ == "__main__":
+    a=[2,4]
+    b=[16,32,96]
+    ct1 = counter1(a,b)
+    ct2 = counter2(a,b)
+    print(ct1,ct2)

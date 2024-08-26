@@ -1,0 +1,54 @@
+#! python3
+
+"""
+# Rearrange String K Distance Apart (hard) 
+# Given a string and a number ‘K’, 
+# find if the string can be rearranged such that 
+# the same characters are at least ‘K’ distance 
+# apart from each other.
+"""
+
+import os, sys
+from heapq import *
+from collections import deque
+
+# --------------------------------------------------------------
+def reorg_str(mystr, k):
+    if k <= 1: 
+        return mystr
+
+    char_cnt = {}
+    for char in mystr:
+        if char not in char_cnt:
+            char_cnt[char] = 1
+        else:
+            char_cnt[char] += 1
+
+    # add all chars to max_heap
+    max_heap = []
+    for char, cnt in char_cnt.items():
+        heappush(max_heap, (-cnt, char))
+
+    queue = deque()
+    str_list = []
+    while max_heap:
+        neg_cnt, char = heappop(max_heap)
+        str_list.append(char)
+        queue.append((char, neg_cnt+1)) # decremented count
+
+        if len(queue) == k:
+            char, neg_cnt = queue.popleft()
+            if -neg_cnt > 0:
+                heappush(max_heap, (neg_cnt, char))
+
+    if len(str_list) == len(mystr): 
+        return ''.join(str_list)     # SUCCESS
+    else:
+        return ""
+
+
+# --------------------------------------------------------------
+if __name__ == '__main__':
+    slist = [("Programming", 3),("mmpp", 2),("aab", 2),("aapa", 3)]
+    for ss,k in slist:
+        print(ss,k,":", reorg_str(ss,k))

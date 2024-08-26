@@ -1,0 +1,230 @@
+#! python3
+
+"""
+You've been tasked to help a village 
+find the best place to install a new well. 
+Youre given a 2D grid where cells 
+can be empty, a house, or a tree. 
+People can walk up, down, left and right, 
+but they cant walk through trees. 
+Place the well that minimizes the total 
+sum distance from all the houses.
+
+            = = = =
+            = H T =
+            = H T =
+            = = H =
+
+# ---------------------------------------------------------
+This problem is similar to LeetCode # 317. 
+  Shortest Distance from All Houses
+
+Idea of the solution:
+
+Run a BFS (Breadth-First-Search) wave from each house
+over the whole land - and in each empty cell accumulate 2 numbers:
+    sum_conn[row][col] - sum of connections to houses (<= N_houses)
+    sum_dist[row][col] - sum of distances from houses
+Then from all empty cells select those where
+    sum_conn[row][col] == N_houses
+    (this means it has paths to all houses)
+And from these select the one(s) with minimum value of sum_dist
+
+For each of Nh houses we go over the whole area Nr * Nc,
+  which takes O(Nh*Nr*Nc).
+Then we go over the area one alst time to select the min(sum_dist)
+So overall time complexity is O( Nhouses * Nrows * Ncols )
+Space complexity - we use three 2-dim arrays:
+    sum_conn, sum_dist, visited.
+so space complexity is ~ O( 3 * Nrows * Ncols )
+Note: if we find an "unreacheable" house, 
+     we return -1 immediately, which greatly improves
+     overall speed on tests
+# ---------------------------------------------------------
+"""
+
+import os, sys, collections
+
+# ----------------------------------------------------
+def init_map(map_num):
+    """ populate map with trees and houses """
+    map_array = []
+    map_array.append("""
+            = = = =
+            = H T =
+            = H T =
+            = = H =
+    """)
+    map_array.append("""
+         - - H - T -
+         - - - - - H
+         - - T - T -
+         - H T - - -
+         - - T - T H
+         - - - - - -
+    """)
+    map_array.append("""
+         - - - - - -
+         - - - - - -
+         - H T - H -
+         - - - - - -
+         - - - - - -
+         - - - - - -
+    """)
+
+    mystr = map_array[map_num]
+
+    arr = mystr.strip().split("\n")
+    arr = [x.strip() for x in arr]
+    mmm = []
+    for row in arr:
+        mmm += [row.strip().split()]
+    return mmm
+
+# ----------------------------------------------------
+def house_locations(mm1):
+    """ returns list of locations of houses as [(row,col),...] """
+    houses = []
+    Nrows = len(mm1)
+    Ncols = len(mm1[0])
+    for r in range(Nrows):
+        for c in range(Ncols):
+            if mm1[r][c] == 'H':
+                houses += [(r,c)]
+    return houses
+
+# -------------------------------------------
+def BFS(r0, c0, grid, Nr, Nc, Nh, sum_conn, distSum):
+    """
+    # we start at a house at a cell [r0][c0]
+    # and do BFS wave through the whole area
+    # keeping track of moves in three 2-dim arrays:
+    #    visited[r][c]  : visited or not
+    #    sum_conn[r][c] : number of times sum_conn (by any path)
+    #    sum_dist[r][c] : sum of distances (from all houses)
+    # 
+    """
+    visited = [[False] * Nc for r in range(Nr)]
+    visited[r0][c0] = True
+    count1 = 1
+    queue = collections.deque([(r0, c0, 0)])
+    while queue:
+        r, c, dist = queue.popleft()
+        for i, j in ((r+1,c),(r-1,c),(r,c+1),(r,c-1)):
+            if (0<=i<Nr) and (0<=j<Nc) and (not visited[i][j]):
+                visited[i][j] = True
+                if not grid[i][j]:   # XXXXXXXXXXXXX
+                    queue.append((i,j,dist+1))
+                    sum_conn[i][j]     += 1
+                    sum_dist[i][j] += dist+1
+                elif grid[i][j] == 1:
+                    count1 += 1
+    return count1 == Nh
+
+# ---------------------------------------------------------
+def find_min_sum_dist(grid, houses, hset):
+    if not grid or not grid[0]: 
+        return -1
+    Nr = len(grid)     # N rows
+    Nc = len(grid[0])  # N columns
+    Nh = 0             # N houses
+    for row in grid:
+        for cell in row:
+            if cell == 1:
+                Nh += 1
+    # -------------------------------------------
+    sum_conn = [[0] * Nc for r in range(Nr)]
+    sum_dist = [[0] * Nc for r in range(Nr)]
+    # -------------------------------------------
+    # do are BFS wave from each houses - populating
+    # counters in all empty cells.
+    # if there is a houses from which it is not possible
+    # to reach one of other houses - immediately exit with "-1"
+    for r in range(Nr):
+        for c in range(Nc):
+            if grid[r][c] == 1:  # house
+                reached_all = BFS(r, c, grid, Nr, Nc, Nh, sum_conn, sum_dist)
+                if not reached_all: 
+                    return -1
+    # -------------------------------------------
+    # If we are here - this means that there are paths
+    # between houses, we have two numbers for each
+    # empty cell:
+    #    sum_conn[r][c] - counts if it was reached while traveling
+    #                     from each house (<= Nh)
+    #    sum_dist[r][c] - sum() of distances from all houses
+    #                We need to select a cell with min value of that.
+    mymin = -1
+    for r in range(Nr):
+        for c in range(Nc):
+            if (not grid[r][c]) and (sum_conn[r][c] == Nh):
+                if mymin < 0:
+                    mymin = sum_dist[r][c]
+                elif distSum[r][c] < mymin:
+                    mymin = sum_dist[r][c]
+    # -------------------------------------------
+    return mymin
+
+# ----------------------------------------------------
+def run_grid(map_num):
+    mm = init_map(map_num)
+    print(" ")
+    # for r in mm: 
+    #     print(r)
+
+    houses = house_locations(mm)  # list of houses
+    hset = set(houses)            # set  of houses
+    print(f"houses={houses}")
+    
+    Nrows = len(mm)
+    Ncols = len(mm[0])
+
+    mybest = find_min_sum_dist(mm, houses, hset) 
+    if mybest[0] < 0:
+        print("Didn't find a solution, Exiting ...") 
+        sys.exit()
+    print(f"found min sum(paths)={mybest[0]} at (row,col) = {mybest[1]}")
+    mm2 = init_map(map_num)
+    r,c = mybest[1]
+    mm2[r][c] = 'W'
+    for row in mm2:
+        print(row)
+    print("-"*40)
+
+# ----------------------------------------------------
+if __name__ == "__main__":
+    run_grid(0)
+    run_grid(1)
+    run_grid(2)
+
+# ----------------------------------------------------
+#    output:
+#
+#        houses=[(1, 1), (2, 1), (3, 2)]
+#        found min sum(paths)=4 at (row,col) = (3, 1)
+#        ['=', '=', '=', '=']
+#        ['=', 'H', 'T', '=']
+#        ['=', 'H', 'T', '=']
+#        ['=', 'W', 'H', '=']
+#        ----------------------------------------
+#
+#        houses=[(0, 2), (1, 5), (3, 1), (4, 5)]
+#        found min sum(paths)=13 at (row,col) = (1, 2)
+#        ['-', '-', 'H', '-', 'T', '-']
+#        ['-', '-', 'W', '-', '-', 'H']
+#        ['-', '-', 'T', '-', 'T', '-']
+#        ['-', 'H', 'T', '-', '-', '-']
+#        ['-', '-', 'T', '-', 'T', 'H']
+#        ['-', '-', '-', '-', '-', '-']
+#        ----------------------------------------
+#
+#        houses=[(2, 1), (2, 4)]
+#        found min sum(paths)=5 at (row,col) = (1, 1)
+#        ['-', '-', '-', '-', '-', '-']
+#        ['-', 'W', '-', '-', '-', '-']
+#        ['-', 'H', 'T', '-', 'H', '-']
+#        ['-', '-', '-', '-', '-', '-']
+#        ['-', '-', '-', '-', '-', '-']
+#        ['-', '-', '-', '-', '-', '-']
+#        ----------------------------------------
+# ----------------------------------------------------

@@ -1,0 +1,180 @@
+﻿#! python
+
+"""
+# leetcode 167 - two_sum problem, input array is sorted (or not)
+# Given an array of integers, find two numbers such 
+# that they add up to a specific target number.
+#
+# The function twoSum() should return indices of the two numbers
+# such that they add up to the target,
+# where index1 must be less than index2.
+# Please note that your returned answers (both index1 and index2)
+# are not zero-based.
+#
+# You may assume that each input would have exactly one solution.
+#
+# Example:
+# Input  : numbers={2, 7, 11, 15}, target=9
+# Output : index1=1, index2=2
+# 
+# Time/Space complexity O(N)
+# ----------------------------------------
+# 3sum - return triplets summing to zero
+# easy solution has complexity O(N*N)
+# https://en.wikipedia.org/wiki/3SUM
+"""
+
+# ---------------------------
+def twosum(nums, target):
+    seen = {}       # num : pos
+    for ii, num in enumerate(nums):
+        pos = ii+1  # use 1-based pos insead of 0-based ii
+        if target - num in seen:
+            return seen[target-num], pos
+        seen[num] = pos
+    return -1,-1
+
+# ---------------------------
+# here is convoluted version
+
+nums = (6, 7, 11, 15, 3, 6, 5, 3)
+
+def twosum(nums=None, target=6):
+    hh = dict(((v, i) for i, v in enumerate(nums)))
+    return next(((i+1, hh.get(target-v)+1)
+                   for i, v in enumerate(nums)
+                   if hh.get(target-v, i) != i), None)
+
+# ---------------------------
+def twosum(nums, target):
+    seen = {}          # num : index
+    for n,x in enumerate(nums):
+        try:
+            return seen[x] + 1, n + 1   # return 1-based position
+        except KeyError:
+            seen.setdefault(target - x, n)
+
+# ---------------------------
+# here is zero-based solution
+
+def twosum_indices_linear(nums, target):
+    numtoindexmap = {}
+    for num1_index, num1 in enumerate(nums):
+        num2 = target - num1
+        try:
+            num2_index = numtoindexmap[num2]
+        except KeyError:
+            numtoindexmap[num1] = num1_index
+        else:
+            return num1_index, num2_index
+
+# --------------------------------------------------------------
+# three_sum() problem
+#
+# Given an array of n integers, find all unique triplets 
+# which sum to zero.
+# Return a list of lists, if there are more than one triplet.
+# For example, given input as [-1, 0, 1, 2, -1, -4],
+# the solution will be: [ [-1, 0, 1], [-1, -1, 2] ]
+# --------------------------------------------------------------
+
+# ---------------------------
+import itertools
+stuff = [-1, 0, 1, 2, -1, -4]
+stuff.sort()
+ls = []
+for subset in itertools.combinations(stuff, 3):
+    if sum(list(subset))==0:
+        # first I have sorted the list because of grouping
+        # Ex: [-1, 0, 1] and [0, 1, -1] are build with the same element
+        # so here is avoiding this.
+        if list(subset) not in ls:
+            ls.append(list(subset))
+print(ls)
+
+# Out: [[-1, -1, 2], [-1, 0, 1]]
+
+# ---------------------------
+from collections import Counter
+
+def threeSum(self, nums):
+    res = []
+    counts = Counter(nums)
+    num_counts = sorted(counts.items())
+
+    # Handle the only case where we pick three same nums
+    if counts[0] >= 3:
+        res.append([0] * 3)
+
+    for i, (first, first_count) in enumerate(num_counts):
+        # Pick two of these and one greater
+        if first_count >= 2 and first < 0 and -(first * 2) in counts:
+            res.append([first, first, -(first * 2)])
+
+        # Pick one and two greater
+        for j in range(i + 1, len(num_counts)):
+            second, second_count = num_counts[j]
+            # Pick two of these as second and third num
+            if second_count >= 2 and -first == 2 * second:
+                res.append([first, second, second])
+
+            # Pick this as second num and third which is greater
+            third = -(first + second)
+            if third > second and third in counts:
+                res.append([first, second, third])
+
+    return res
+
+# ---------------------------
+def threeSum(nums):
+    """
+    :type nums: List[int]
+    :rtype: List[List[int]]
+    """
+    result = []
+    nums.sort()
+    r=len(nums)-1
+    for i in range(len(nums)-2):
+        l = i + 1  # we don't want l and i to be the same value.
+                   # for each value of i, l starts one greater
+                   # and increments from there.
+        while (l < r):
+            sum_ = nums[i] + nums[l] + nums[r]
+            if (sum_ < 0):
+                l = l + 1
+            if (sum_ > 0):
+                r = r - 1
+            if not sum_:  # 0 is False in a boolean context
+                result.append([nums[i],nums[l],nums[r]])
+                l = l + 1  # increment l when we find a combination that works
+    unique_lst = []
+    [unique_lst.append(sublst) for sublst in result if not unique_lst.count(sublst)]
+
+# ---------------------------
+# idea of code with iterators (not tested):
+
+def three_sum(nums):
+    def uniques(nums_sorted, start, stop, step):
+        prev = None
+        for idx in range(start, stop, step):  # xrange() in python2
+            value = nums_sorted[idx]
+            if value != prev:
+                prev = value
+                yield idx, value
+
+    def two_pointer(nums_sorted, neg_a, start):
+        biter = uniques(nums_sorted, start, len(nums_sorted), 1)
+        citer = uniques(nums_sorted, len(nums_sorted) - 1, start, -1)
+        (bidx, b), (cidx, c) = next(biter), next(citer)
+        while bidx < cidx:
+            two_sum = b + c
+            if two_sum == neg_a:
+                yield b, c
+            if two_sum <= neg_a:
+                bidx, b = next(biter)
+            if two_sum >= neg_a:
+                cidx, c = next(citer)
+
+    nums = sorted(nums)
+    return [[a, b, c] for aidx, a in uniques(nums, 0, len(nums) - 2, 1)
+                      for b, c in two_pointer(nums, -a, aidx + 1)]

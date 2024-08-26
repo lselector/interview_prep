@@ -1,0 +1,46 @@
+﻿#! python
+
+# -------------------------------------
+# Collatz conjecture
+# Lets define a sequence as follows: 
+#
+# start with any positive integer n. 
+# Then each term is obtained from the previous term as follows: 
+#
+#   x/2     if even   # if the previous term is even, the next 
+#                     # term is one half of the previous term. 
+#   x*3 + 1 if odd    # if the previous term is odd, the next 
+#                     # term is 3 times the previous term plus 1. 
+#
+# The conjecture is that the sequence will always reach 1 (for any n).
+# For example:
+#     3 > 10 > 5 > 16 > 8 > 4 > 2 > 1 
+
+# -------------------------------------
+def make_step(n):
+    if n % 2 :
+        n = 3*n + 1
+    else :
+        n = round(n / 2)
+    return n
+
+# -------------------------------------
+def max_cc_length(k):
+    """
+    # find max_len of CC sequences for 
+    # start number <= k
+    """
+    max_len = 1
+    lengths = {1: 1} # Base case.
+    for i in range(2, k + 1): 
+        curr_path = []
+        curr_len = 0
+        while i not in lengths:
+            curr_path.append(i)
+            curr_len += 1
+            i = make_step(i)
+        curr_len += lengths[i]
+        for offset, j in enumerate(curr_path):
+            lengths[j] = curr_len - offset
+        max_len = max(max_len, curr_len)
+    return max_len

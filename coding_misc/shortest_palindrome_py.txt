@@ -1,0 +1,62 @@
+#! python3
+
+"""
+# Shortest Palindrome
+# Given a string s, you are allowed to convert it to a palindrome 
+# by adding characters in front of it. Find and return the shortest
+# palindrome you can find by performing this transformation.
+# Example 1:
+#     Input:   "aacecaaa"
+#     Output: "aaacecaaa"
+# Example 2:
+#     Input:     "abcd"
+#     Output: "dcbabcd"
+"""
+
+# ----------------------------------------------------
+# Runtime: 60 ms, faster than 58.30% of Python3
+# Memory Usage: 14.2 MB, less than 14.29% of Python3
+# Note - this solution doesn't use any standard string-searching
+# methods like KMP, Z, Rabin Karp, Boyer-Moore, Manachers, etc.
+# Instead it is using brute-force approach.
+# But it is fast because it uses a built-in function "startswith"
+# ( "mama".startswith("mam")  returns True )
+#
+
+def shortestPalindrome(self, s: str) -> str:
+    r = s[::-1]
+    for i in range(len(s) + 1):
+        if s.startswith(r[i:]):
+            return r[:i] + s
+
+# ----------------------------------------------------
+# Runtime: 412 ms, faster than 19.16% of Python3
+# Memory Usage: 14.2 MB, less than 14.29% of Python3
+#
+
+def shortestPalindrome(self, s: str) -> str:
+    for i in range(len(s), -1, -1): 
+        if s[:i] == s[:i][::-1]: 
+            return s[i:][::-1] + s
+
+# ----------------------------------------------------
+# Runtime: 396 ms, faster than 23.00% of Python3
+# Memory Usage: 14.4 MB, less than 14.29% of Python3
+#
+
+def isPalin(s):
+    return s==s[::-1]
+
+def shortestPalindrome(s: str) -> str:
+    if self.isPalin(s):
+        return s
+    add = ''
+    while not isPalin(s):
+        add += s[-1]
+        s = s[:-1]
+    return add + s + add[::-1]
+
+# ----------------------------------------------------
+# It may be useful to explore other solutions
+# using algorithms like KMP, Z, Rabin Karp, Boyer-Moore, Manachers, etc.
+# ----------------------------------------------------

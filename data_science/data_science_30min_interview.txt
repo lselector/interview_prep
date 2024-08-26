@@ -1,0 +1,85 @@
+
+Have you done Machine Learning?
+
+on which OS?
+Mac or Windows?
+Linux?
+
+unix shell you use?
+unix commands for recursive search
+
+what is the purpose of "export" command?
+set vs env
+
+=======================================
+Have you used Python? R?
+
+What tools you usefor ML? 
+Jupyter? VS Code?
+
+Which python distribution you have used?
+anaconda ?
+
+Which python modules you use to work with data
+and for ML?
+pandas, numpy, sklearnm, matplotlib, ...
+
+logistic regression vs linear regression
+
+KNN vs K-means
+
+precision vs recall
+
+What is confusion matrix?
+
+What is Kaggle?
+
+=======================================
+SQL
+  query to return maximum salary
+      select max(sal) from Employee
+
+  query to return 2nd max salary
+      select max(sal) from Employee e1
+      where sal < (select max(sal) from Employee e2)
+
+  query to return n-th max salary
+      select * from (
+          select ename, 
+                 sal, 
+                 dense_rank() over (order by sal desc) myrank 
+          from Employee ) 
+      where myrank = n;
+  
+      (other solutions can use distinct & limit)
+      https://www.geeksforgeeks.org/find-nth-highest-salary-table/
+  
+  diff between inner join and left outer join
+  ...
+
+=======================================
+What are 3 clouds (AWS, Azure, GCP)
+What have you done on Clouds
+
+=======================================
+formula for normal gaussian distribution
+
+    exp(x2/2)
+
+Euler number ?
+
+exponential function and its derivative  exp(x)  exp(x)
+
+natural logarithm    and its derivative   ln(x)   1/x
+
+difference between bit and byte
+
+Intel 4004    4 bits
+Intel 8086    8 bits = 1 byte
+Intel 8088
+Intel 80286
+Intel 80386
+...
+Nowadays: 64 bit OS (word = 8 bytes)
+
+=======================================

@@ -1,0 +1,552 @@
+﻿2018 google-interview-questions
+
+# --------------------------------------------------------------
+39 of 46: The Two Egg Problem.
+A building has 100 floors. 
+You have two eggs.
+Find the highest floor from which the egg can be dropped 
+without breaking.
+
+Let's say n is the number of floors we'll skip the first time, 
+and we know 1 is the number of floors we'll skip last. 
+Our equation will be: n + (n-1) + ... + 1
+n = 13.651
+
+So we will use series: 14, 27, 39, ...
+Total number of drops (worst case) = 14
+
+# --------------------------------------------------------------
+10 of 46: Second Largest Item in BST
+Write a function to find the 2nd largest element in a binary
+search tree. 
+
+  class BinaryTreeNode(object):
+
+    def __init__(self, value):
+        self.value = value
+        self.left  = None
+        self.right = None
+
+    def insert_left(self, value):
+        self.left = BinaryTreeNode(value)
+        return self.left
+
+    def insert_right(self, value):
+        self.right = BinaryTreeNode(value)
+        return self.right
+
+The largest element is the "rightmost".
+The 2nd largest may be:
+  - the parent of the largest (if largest doesn't have left subtree)
+  - the largest of the left subtree of the largest
+         ( 5 )
+        /     \
+      (3)     (8)
+     /  \     /  \
+   (1)  (4) (7)  (12)
+                 /
+               (10)
+               /  \
+             (9)  (11)
+
+def find_largest(root_node):
+    current = root_node
+    while current:
+        if not current.right:
+            return current.value
+        current = current.right
+
+def find_second_largest(root_node):
+    if (root_node is None or
+            (root_node.left is None and root_node.right is None)):
+        raise ValueError('Tree must have at least 2 nodes')
+
+    current = root_node
+    while current:
+        # Case: current is largest and has a left subtree
+        # 2nd largest is the largest in that subtree
+        if current.left and not current.right:
+            return find_largest(current.left)
+
+        # Case: current is parent of largest, and largest has no children,
+        # so current is 2nd largest
+        if (current.right and
+                not current.right.left and
+                not current.right.right):
+            return current.value
+
+        current = current.right
+
+Complexity: O(h) time, where h is the height of the tree.
+This is O(lg(n)) for balanced tree, or O(n) for unbalanced.
+Space complexity is O(1).
+
+# --------------------------------------------------------------
+16 of 46: The Cake Thief 
+
+You are stealing cakes.
+Each cake is described by a tuple (int,int) = (weight, value)
+Write a function
+   max_duffel_bag_value(cake_tuples, capacity) 
+that takes a list of cake type tuples and capacity = max_weight
+and returns the maximum monetary value the duffel bag can hold.
+
+Note: number of types is limited.
+      supply of each type is unlimited.
+
+cake_tuples = [(7, 160), (3, 90), (2, 15)]
+capacity    = 20
+ret = max_duffel_bag_value(cake_tuples, capacity)
+
+effectiveness is (value per weight) ratio.
+So we want to try to fit as many most "effecitve" ones.
+And we try from the smallest bags (in total weight) - and 
+build the list max_values_at_capacities
+
+def max_duffel_bag_value(cake_tuples, weight_capacity):
+    # We make a list to hold the maximum possible value at every
+    # duffel bag weight capacity from 0 to weight_capacity
+    # starting each index with value 0
+    max_values_at_capacities = [0] * (weight_capacity + 1)
+
+    for current_capacity in xrange(weight_capacity + 1):
+        # Set a variable to hold the max monetary value so far
+        # for current_capacity
+        current_max_value = 0
+
+        for cake_weight, cake_value in cake_tuples:
+            # If a cake weighs 0 and has a positive value the value of
+            # our duffel bag is infinite!
+            if cake_weight == 0 and cake_value != 0:
+                return float('inf')
+
+            # If the current cake weighs as much or less than the
+            # current weight capacity it's possible taking the cake
+            # would get a better value
+            if cake_weight <= current_capacity:
+
+                # So we check: should we use the cake or not?
+                # If we use the cake, the most kilograms we can include in
+                # addition to the cake we're adding is the current capacity
+                # minus the cake's weight. We find the max value at that
+                # integer capacity in our list max_values_at_capacities
+                max_value_using_cake = (
+                    cake_value
+                    + max_values_at_capacities[current_capacity - cake_weight]
+                )
+
+                # Now we see if it's worth taking the cake. how does the
+                # value with the cake compare to the current_max_value?
+                current_max_value = max(max_value_using_cake,
+                                        current_max_value)
+
+        # Add each capacity's max value to our list so we can use them
+        # when calculating all the remaining capacities
+        max_values_at_capacities[current_capacity] = current_max_value
+
+    return max_values_at_capacities[weight_capacity]
+
+O(n k) time, and O(k) space, 
+where "n" is the number of types, and "k" is capacity of the bag
+
+# --------------------------------------------------------------
+40 of 46: Find Duplicate, Space Edition
+
+We have a list of (n+1) integers in range 1..n.
+Write a function which finds an integer that appears more than once in our list.
+Note - if there are multiple duplicates, you only need to find one of them.
+If we use hash - then we can do it in O(n) time and O(n) space.
+We want to optimize for space - do it in O(1) for space.
+
+Our approach is similar to a binary search, 
+except we divide the range of possible answers in half at each step, 
+rather than dividing the list in half.
+
+ - Find the number of integers in our input list which lie within the range 
+      1..n/2
+ - Compare that to the number of possible unique integers in the same range.
+ - If the number of actual integers is greater than the number of possible integers, 
+   we know there s a duplicate in the range 1..n/2, 
+   so we iteratively use the same approach on that range.
+ - If the number of actual integers is not greater than the number of possible integers,
+   we know there must be duplicate in the range (1+n/2)..n
+   so we iteratively use the same approach on that range.
+ - At some point our range will contain just 1 integer, which will be our answer.
+
+def find_repeat(the_list):
+    floor = 1
+    ceiling = len(the_list) - 1
+
+    while floor < ceiling:
+
+        # divide our range 1..n into an upper range and lower range
+        # (such that they don't overlap)
+        # lower range is floor..midpoint
+        # upper range is midpoint+1..ceiling
+        midpoint = floor + ((ceiling - floor) / 2)
+        lower_range_floor, lower_range_ceiling = floor, midpoint
+        upper_range_floor, upper_range_ceiling = midpoint+1, ceiling
+
+        # count number of items in lower range
+        items_in_lower_range = 0
+        for item in the_list:
+            # is it in the lower range?
+            if item >= lower_range_floor and item <= lower_range_ceiling:
+                items_in_lower_range += 1
+
+        distinct_possible_integers_in_lower_range = \
+            lower_range_ceiling - lower_range_floor + 1
+
+        if items_in_lower_range > distinct_possible_integers_in_lower_range:
+            # there must be a duplicate in the lower range
+            # so use the same approach iteratively on that range
+            floor, ceiling = lower_range_floor, lower_range_ceiling
+        else:
+            # there must be a duplicate in the upper range
+            # so use the same approach iteratively on that range
+            floor, ceiling = upper_range_floor, upper_range_ceiling
+
+    # floor and ceiling have converged
+    # we found a number that repeats!
+    return floor
+
+Complexity: O(1) space and O(nlg(n)) time
+
+Note - we can actually do even better: O(n) time.
+See in next problem (BEAST MODE)
+
+# --------------------------------------------------------------
+41 of 46: Find Duplicate, Space Edition BEAST MODE
+Same problem as the above, but the optimal answer is so
+complicated we had to spin it off into its own challenge.
+
+Solution is with time O(n). 
+Using a linked list - finding when we enter the loop.
+
+ full description is in file "Find Repeat BEAST MODE.pdf"
+
+# --------------------------------------------------------------
+24 of 46: Reverse a Linked List »
+Don't create new node objects  - reverse the list in place. 
+
+Your function will have one input: the head of the list.
+Your function should return the new head of the list.
+
+Here's a sample linked list node class:
+
+class LinkedListNode(object):
+
+    def __init__(self, value):
+        self.value = value
+        self.next  = None
+
+def reverse(head_of_list):
+    current_node = head_of_list
+    previous_node = None
+    next_node = None
+
+    # Until we have 'fallen off' the end of the list
+    while current_node:
+        # Copy a pointer to the next element
+        # before we overwrite current_node.next
+        next_node = current_node.next
+
+        # Reverse the 'next' pointer
+        current_node.next = previous_node
+
+        # Step forward in the list
+        previous_node = current_node
+        current_node = next_node
+
+    return previous_node
+
+# --------------------------------------------------------------
+1 of 46: Getting Rich on Apple Stocks 
+
+stock_prices_yesterday = [10, 7, 5, 8, 11, 9]
+get_max_profit(stock_prices_yesterday)
+  # Returns 6 (buying for $5 and selling for $11)
+No "shorting" - you must buy before you sell.
+You may not buy and sell in the same time step.
+If the stock value goes down all day, the best profit will be negative.
+Do it in O(n) time and O(1) space!
+
+Solution
+Walk through the list to track the max profit and lowest price so far.
+For every price, we check if:
+  we can get a better profit by buying at min_price 
+  and selling at the current_price
+  we have a new min_price
+
+def get_max_profit(stock_prices_yesterday):
+
+    if len(stock_prices_yesterday) < 2:
+        raise ValueError('Getting a profit requires at least 2 prices')
+
+    # We'll greedily update min_price and max_profit, so we initialize
+    # them to the first price and the first possible profit
+    min_price = stock_prices_yesterday[0]
+    max_profit = stock_prices_yesterday[1] - stock_prices_yesterday[0]
+
+    # Start at the second (index 1) time
+    # We can't sell at the first time, since we must buy first,
+    # and we can't buy and sell at the same time!
+    # If we started at index 0, we'd try to buy *and* sell at time 0.
+    # This would give a profit of 0, which is a problem if our
+    # max_profit is supposed to be *negative*--we'd return 0.
+
+    for current_time in xrange(1, len(stock_prices_yesterday)):
+        current_price = stock_prices_yesterday[current_time]
+
+        # See what our profit would be if we bought at the
+        # min price and sold at the current price
+        potential_profit = current_price - min_price
+
+        # Update max_profit if we can do better
+        max_profit = max(max_profit, potential_profit)
+
+        # Update min_price so it's always
+        # the lowest price we've seen so far
+        min_price = min(min_price, current_price)
+
+    return max_profit
+
+# --------------------------------------------------------------
+34 of 46: Word Cloud Data Generator 
+
+Write code that takes a long string and builds 
+a dictionary where the keys are words
+and the values are the number of times the words occurred.
+Think ho to handle capital letters, hyphenated words, punctuation, etc.
+  'We came, we saw, we conquered...then we ate Bill's (Mille-Feuille) cake.'
+  'The bill came to five dollars.'
+you should not use regex.
+You should do this in O(n) runtime and space.
+
+To handle duplicate words with different cases, 
+we choose to make a word uppercase in our dictionary 
+only if it is always uppercase in the original string. 
+While this is a reasonable approach, it is imperfect 
+(consider proper nouns that are also lowercase words, 
+like "Bill" and "bill").
+We build our own split_words() method instead of 
+using a built-in one. This allows us to avoid spending
+memory on a big lsit of words.
+
+class WordCloudData:
+
+    def __init__(self, input_string):
+        self.words_to_counts = {}
+        self.populate_words_to_counts(input_string)
+
+    def populate_words_to_counts(self, input_string):
+        # iterates over each character in the input string, splitting
+        # words and passing them to add_word_to_dictionary()
+
+        current_word_start_index = 0
+        current_word_length = 0
+
+        for i, character in enumerate(input_string):
+
+            # if we reached the end of the string we check if the last
+            # character is a letter and add the last word to our dictionary
+            if i == len(input_string) - 1:
+                if character.isalpha():
+                    current_word_length += 1
+                if current_word_length > 0:
+                    current_word = input_string[current_word_start_index:
+                        current_word_start_index + current_word_length]
+                    self.add_word_to_dictionary(current_word)
+
+            # if we reach a space or emdash we know we're at the end of a word
+            # so we add it to our dictionary and reset our current word
+            elif character == ' ' or character == u'\u2014':
+                if current_word_length > 0:
+                    current_word = input_string[current_word_start_index:
+                        current_word_start_index + current_word_length]
+                    self.add_word_to_dictionary(current_word)
+                    current_word_length = 0
+
+            # we want to make sure we split on ellipses so if we get two periods in
+            # a row we add the current word to our dictionary and reset our current word
+            elif character == '.':
+                if i < len(input_string) - 1 and input_string[i + 1] == '.':
+                    if current_word_length > 0:
+                        current_word = input_string[current_word_start_index:
+                            current_word_start_index + current_word_length]
+                        self.add_word_to_dictionary(current_word)
+                        current_word_length = 0
+
+            # if the character is a letter or an apostrophe, we add it to our current word
+            elif character.isalpha() or character == '\'':
+                if current_word_length == 0:
+                    current_word_start_index = i
+                current_word_length += 1
+
+            # if the character is a hyphen, we want to check if it's surrounded by letters
+            # if it is, we add it to our current word
+            elif character == '-':
+                if i > 0 and input_string[i - 1].isalpha() and \
+                        input_string[i + 1].isalpha():
+                    if current_word_length == 0:
+                        current_word_start_index = i
+                    current_word_length += 1
+                else:
+                    if current_word_length > 0:
+                        current_word = input_string[current_word_start_index:
+                            current_word_start_index + current_word_length]
+                        self.add_word_to_dictionary(current_word)
+                        current_word_length = 0
+
+    def add_word_to_dictionary(self, word):
+        """ create or increment self.words_to_counts[word] """
+
+        # if the word is already in the dictionary we increment its count
+        if word in self.words_to_counts:
+            self.words_to_counts[word] += 1
+
+        # if a lowercase version is in the dictionary, we know our input word must be uppercase
+        # but we only include uppercase words if they're always uppercase
+        # so we just increment the lowercase version's count
+
+        elif word.lower() in self.words_to_counts:
+            self.words_to_counts[word.lower()] += 1
+
+        # if an uppercase version is in the dictionary, we know our input word must be lowercase.
+        # since we only include uppercase words if they're always uppercase, we add the
+        # lowercase version and give it the uppercase version's count
+
+        elif word.capitalize() in self.words_to_counts:
+            self.words_to_counts[word] = 1
+            self.words_to_counts[word] += self.words_to_counts[word.capitalize()]
+            del self.words_to_counts[word.capitalize()]
+
+        # otherwise, the word is not in the dictionary at all, lowercase or uppercase
+        # so we add it to the dictionary
+
+        else:
+            self.words_to_counts[word] = 1
+
+# --------------------------------------------------------------
+38 of 46: Simulate a 7-Sided Die Using a 5-Sided Die 
+
+You have a function rand5() that generates a random integer from
+1 to 5. Use it to write a function rand7() that generates a
+random integer from 1 to 7.
+
+  def rand7():
+
+    while True:
+
+        # do our die rolls
+        roll1 = rand5()
+        roll2 = rand5()
+
+        outcome_number = (roll1-1) * 5 + (roll2-1) + 1
+
+        # if we hit an extraneous
+        # outcome we just re-roll
+        if outcome_number > 21:
+            continue
+
+        # our outcome was fine. return it!
+        return outcome_number % 7 + 1
+
+# --------------------------------------------------------------
+42 of 46: Find Duplicate Files After Malicious Attack
+Write a function that returns a list of all the duplicate files. 
+Return list of tuples of (duplicate, original).
+We assume that each file was only duplicated once.
+And the duplicate has a newer timestamp.
+
+import os
+import hashlib
+
+def find_duplicate_files(starting_directory):
+    files_seen_already = {}
+    stack = [starting_directory]
+
+    # we'll track tuples of (duplicate_file, original_file)
+    duplicates = []
+
+    while len(stack):
+
+        current_path = stack.pop()
+
+        # if it's a directory,
+        # put the contents in our stack
+        if os.path.isdir(current_path):
+            for path in os.listdir(current_path):
+                full_path = os.path.join(current_path, path)
+                stack.append(full_path)
+
+        # if it's a file
+        else:
+
+            # get its hash
+            file_hash = sample_hash_file(current_path)
+
+            # get its last edited time
+            current_last_edited_time = os.path.getmtime(current_path)
+
+            # if we've seen it before
+            if file_hash in files_seen_already:
+
+                existing_last_edited_time, existing_path = \
+                    files_seen_already[file_hash]
+
+                if current_last_edited_time > existing_last_edited_time:
+                    # current file is the dupe!
+                    duplicates.append((current_path, existing_path))
+
+                else:
+                    # old file is the dupe!
+                    duplicates.append((existing_path, current_path))
+
+                    # but also update files_seen_already to have
+                    # the new file's info
+                    files_seen_already[file_hash] = \
+                        (current_last_edited_time, current_path)
+
+# but also update files_seen_already to have
+                    # the new file's info
+                    files_seen_already[file_hash] = \
+                        (current_last_edited_time, current_path)
+
+            # if it's a new file, throw it in files_seen_already
+            # and record its path and last edited time,
+            # so we can tell later if it's a dupe
+            else:
+                files_seen_already[file_hash] = \
+                    (current_last_edited_time, current_path)
+
+    return duplicates
+
+def sample_hash_file(path):
+
+    num_bytes_to_read_per_sample = 4000
+    total_bytes = os.path.getsize(path)
+
+    hasher = hashlib.sha512()
+
+    with open(path, 'rb') as file:
+
+        # if the file is too short to take 3 samples, hash the entire file
+        if total_bytes < num_bytes_to_read_per_sample * 3:
+            hasher.update(file.read())
+
+        else:
+            num_bytes_between_samples = \
+                (total_bytes - num_bytes_to_read_per_sample * 3) / 2
+
+            # read first, middle, and last bytes
+            for offset_multiplier in xrange(3):
+                start_of_sample = offset_multiplier * \
+                    (num_bytes_to_read_per_sample + num_bytes_between_samples)
+                file.seek(start_of_sample)
+                sample = file.read(num_bytes_to_read_per_sample)
+                hasher.update(sample)
+
+    return hasher.hexdigest()
+
+# --------------------------------------------------------------

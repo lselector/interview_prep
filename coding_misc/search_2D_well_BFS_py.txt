@@ -1,0 +1,195 @@
+#! python3
+
+"""
+You've been tasked to help a village 
+find the best place to install a new well. 
+Youre given a 2D grid where cells 
+can be empty, a house, or a tree. 
+People can walk up, down, left and right, 
+but they cant walk through trees. 
+Place the well that minimizes the total 
+sum distance from all the houses.
+
+            = = = =
+            = H T =
+            = H T =
+            = = H =
+
+"""
+
+import os, sys, collections
+
+# ----------------------------------------------------
+def init_map(map_num):
+    """ populate map with trees and houses """
+    map_array = []
+    map_array.append("""
+            = = = =
+            = H T =
+            = H T =
+            = = H =
+    """)
+    map_array.append("""
+         - - H - T -
+         - - - - - H
+         - - T - T -
+         - H T - - -
+         - - T - T H
+         - - - - - -
+    """)
+    map_array.append("""
+         - - - - - -
+         - - - - - -
+         - H T - H -
+         - - - - - -
+         - - - - - -
+         - - - - - -
+    """)
+
+    mystr = map_array[map_num]
+
+    arr = mystr.strip().split("\n")
+    arr = [x.strip() for x in arr]
+    mmm = []
+    for row in arr:
+        mmm += [row.strip().split()]
+    return mmm
+
+# ----------------------------------------------------
+def house_locations(mm1):
+    """ returns list of locations of houses as [(row,col),...] """
+    houses = []
+    Nrows = len(mm1)
+    Ncols = len(mm1[0])
+    for r in range(Nrows):
+        for c in range(Ncols):
+            if mm1[r][c] == 'H':
+                houses += [(r,c)]
+    return houses
+
+# ----------------------------------------------------
+def calc_best_route_size(mm,well,house,Nbig):
+    wr,wc = well
+
+    qq = collections.deque()
+    qq.append((wr,wc,0))
+    Nrows = len(mm)
+    Ncols = len(mm[0])
+    visited = [[False for x in range(Ncols)] for y in range(Nrows)]
+    visited[wr][wc] = True
+
+    while len(qq):
+        p = qq.popleft()
+        r,c,d = p  # row, col, depth (number of steps)
+        if (r,c) == house:
+            # print(f"found {d}")
+            return d   # we found it !
+        # if (r,c) ==(1,1):
+        #     for rr in visited:
+        #         print(rr)
+        # -----------------------------
+        # add neighbours to the queue
+        for (r1,c1) in [(r-1,c),(r+1,c),(r,c-1),(r,c+1)]:
+            if (r1<0 or r1>=Nrows or c1<0 or c1>=Ncols):
+                continue
+            if (r1,c1) == house:
+                # print(f"found {d+1}")
+                return d+1   # we found it !
+            if (visited[r1][c1] == True) or (mm[r1][c1] == 'T'):
+                continue
+            qq.append((r1, c1, d+1))
+            visited[r1][c1] = True
+        # -----------------------------
+
+    return Nbig
+
+# ----------------------------------------------------
+def find_min_well_dist(mm, houses, hset):
+    Nrows = len(mm)
+    Ncols = len(mm[0])
+    Nbig = 10*len(houses)*(Nrows+Ncols)**2
+    best_point = [Nbig,(-1,-1)]
+    # ---------------------------------
+    # go through all potential locations of the well
+    for row in range(len(mm)):
+        for col in range(len(mm[0])):
+            if ((row,col) in hset) or (mm[row][col] == 'T'):
+                continue  # the well can not be in the house or tree
+            # -------------------------
+            well = (row,col)    # the well location
+            sum_of_paths = 0
+            for h in houses:
+                sum_of_paths += calc_best_route_size(mm,well,h,Nbig)
+            if sum_of_paths < best_point[0]:
+                best_point[0] = sum_of_paths
+                best_point[1] = (row,col)
+
+    if best_point[0] < Nbig:
+        return best_point
+    else:
+        print(f"best_point = {best_point}")
+        return None
+
+# ----------------------------------------------------
+def run_grid(map_num):
+    mm = init_map(map_num)
+    print(" ")
+    # for r in mm: 
+    #     print(r)
+
+    houses = house_locations(mm)  # list of houses
+    hset = set(houses)            # set  of houses
+    print(f"houses={houses}")
+    
+    Nrows = len(mm)
+    Ncols = len(mm[0])
+
+    mybest = find_min_well_dist(mm, houses, hset) 
+    if mybest == None:
+        print("Didn't find a solution, Exiting ...") 
+        sys.exit()
+    print(f"found min sum(paths)={mybest[0]} at (row,col) = {mybest[1]}")
+    mm2 = init_map(map_num)
+    r,c = mybest[1]
+    mm2[r][c] = 'W'
+    for row in mm2:
+        print(row)
+    print("-"*40)
+
+# ----------------------------------------------------
+if __name__ == "__main__":
+    run_grid(0)
+    run_grid(1)
+    run_grid(2)
+
+# ----------------------------------------------------
+#    output:
+#
+#        houses=[(1, 1), (2, 1), (3, 2)]
+#        found min sum(paths)=4 at (row,col) = (3, 1)
+#        ['=', '=', '=', '=']
+#        ['=', 'H', 'T', '=']
+#        ['=', 'H', 'T', '=']
+#        ['=', 'W', 'H', '=']
+#        ----------------------------------------
+#
+#        houses=[(0, 2), (1, 5), (3, 1), (4, 5)]
+#        found min sum(paths)=13 at (row,col) = (1, 2)
+#        ['-', '-', 'H', '-', 'T', '-']
+#        ['-', '-', 'W', '-', '-', 'H']
+#        ['-', '-', 'T', '-', 'T', '-']
+#        ['-', 'H', 'T', '-', '-', '-']
+#        ['-', '-', 'T', '-', 'T', 'H']
+#        ['-', '-', '-', '-', '-', '-']
+#        ----------------------------------------
+#
+#        houses=[(2, 1), (2, 4)]
+#        found min sum(paths)=5 at (row,col) = (1, 1)
+#        ['-', '-', '-', '-', '-', '-']
+#        ['-', 'W', '-', '-', '-', '-']
+#        ['-', 'H', 'T', '-', 'H', '-']
+#        ['-', '-', '-', '-', '-', '-']
+#        ['-', '-', '-', '-', '-', '-']
+#        ['-', '-', '-', '-', '-', '-']
+#        ----------------------------------------
+# ----------------------------------------------------

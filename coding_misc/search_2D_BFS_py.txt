@@ -1,0 +1,164 @@
+#!  python3
+
+"""
+# Simple BFS (Breadth First Search) script
+# to find path between two points "B" & "E"
+# on a N x N board.
+# Allowed steps - verticalor horizontal.
+# Note - we need to avoid cells marked "T" (tree).
+"""
+
+# ----------------------------------------------------
+def init_map():
+    """ 
+    # populate map with:
+    # T - Trees, S - Start, E - End
+    """
+
+    mystr1 = """
+            - - - -
+            S - T -
+            - - T E
+            - - - -
+    """
+
+    mystr2 = """
+         - - - - T -
+         - - - - - -
+         - - T - T -
+         - E T - - -
+         - - T - T S
+         - - - - - -
+    """
+
+    mystr3 = """
+         - - - - - -
+         - - - - - -
+         - S T - E -
+         - - - - - -
+         - - - - - -
+         - - - - - -
+    """
+
+    mystr = mystr1  # change this to test different inputs
+
+    arr = mystr.strip().split("\n")
+    arr = [x.strip() for x in arr]
+    grid = []
+    for row in arr:
+        grid += [row.strip().split()]
+
+    return grid
+
+# ----------------------------------------------------
+def init_visited(grid):
+    Nrows = len(grid)
+    Ncols = len(grid[0])
+    v = [[False for x in range(Ncols)] for y in range(Nrows)]
+    return v 
+
+# ----------------------------------------------------
+def get_end_points(grid):
+    """
+    # return (row,col), (row,col) for Begin and End points
+    """
+    houses = []
+    Nrows = len(grid)
+    Ncols = len(grid[0])
+    for r in range(Nrows):
+        for c in range(Ncols):
+            if grid[r][c] == 'S':
+                ss = (r,c)
+            if grid[r][c] == 'E':
+                ee = (r,c)
+
+    return ss, ee
+
+# ----------------------------------------------------
+def on_map(node,v):
+    Nrows = len(v)
+    Ncols = len(v[0])
+    r,c = node
+    if r < 0 or c < 0 or r >= Nrows or c >= Ncols:
+        return False
+    return True
+
+# ----------------------------------------------------
+def mark_visited(node, v):
+    if not on_map(node, v):
+        return
+    r,c = node
+    v[r][c] = True
+
+# ----------------------------------------------------
+def is_visited(node, v):
+    if not on_map(node, v):
+        return
+    r,c = node
+    if v[r][c]:
+        return True
+    return False
+
+# ----------------------------------------------------
+def get_neighbors(node, grid):
+    """ 
+    # returns a list of next possible cells
+    # (not Tree and not Start)
+    """
+    mynodes = []
+    r,c = node
+    for nn in [(r-1,c),(r+1,c),(r,c-1),(r,c+1)]:
+        if not on_map(nn,grid)     : continue
+        rr,cc = nn
+        if grid[rr][cc] in ['T','S'] : continue
+        mynodes.append(nn)
+    return mynodes
+
+# ----------------------------------------------------
+def find_path_bfs(s, e, grid, visited):
+    """
+    # given nodes "s" and "e" (Start and End)
+    # and two maps: "grid" and "visited"
+    # populates the path between Start and End
+    # using the BFS (Breadth First Search) algorithm
+    # returns list of nodes of the path.
+    # A node is a tuple (row,col)
+    """
+    queue = [(s, [])]  # start point, empty path
+
+    while len(queue) > 0:
+        node, path = queue.pop(0)
+        path.append(node)
+        mark_visited(node, visited)
+
+        if node == e:
+            return path
+
+        adj_nodes = get_neighbors(node, grid)
+        for item in adj_nodes:
+            if not is_visited(item, visited):
+                queue.append((item, path[:]))
+
+    return None  # no path found
+
+# ----------------------------------------------------
+if __name__ == "__main__":
+    grid = init_map()
+    visited = init_visited(grid)
+    for r in grid: print(r)
+    # -------------
+    ss, ee = get_end_points(grid)
+    # -------------
+    mypath = find_path_bfs(ss, ee, grid, visited)
+    print("-"*40)
+    if mypath == None:
+        print("ERROR, no path found")
+    else:
+        g2 = init_map()
+        for node in mypath:
+            r,c = node
+            if node in (ss,ee):
+                continue
+            g2[r][c] = 'o'
+        for row in g2: print(row)
+# ----------------------------------------------------
