@@ -133,7 +133,7 @@ Recovery strategies (in case of failure):
 MVCC (Multiple Value Concurrency Control):
   Concurrently have several values:
     previous values from which reading is happening
-    new values eing written
+    new values being written
   Periodocally clean out old values
 Saga Pattern - example "trip saga": reserve hotel, car, plane ticket
   Do it in this order.
